@@ -1,0 +1,1502 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+    <title>rndmfg — Blockly (Python generator)</title>
+
+    <!-- Icons (unchanged) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/brands.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+NO:wght@100..400&display=swap" rel="stylesheet">
+    <!-- Load Blockly once -->
+    <script>
+        (function loadBlockly() {
+            function add(src, next) {
+                var s = document.createElement('script');
+                s.src = src; s.defer = false; s.async = false; s.onload = next || null;
+                document.head.appendChild(s);
+            }
+            add('https://unpkg.com/blockly@10.4.3/blockly_compressed.js', function () {
+                add('https://unpkg.com/blockly@10.4.3/blocks_compressed.js', function () {
+                    add('https://unpkg.com/blockly@10.4.3/python_compressed.js', function () {
+                        window.__blocklyLoaded = true;
+                    });
+                });
+            });
+        })();
+    </script>
+
+</head>
+
+<body>
+    <style>
+        :root {
+            --mint: #cfeff2;
+            --panel: #f7fbfc;
+            --grid: #cfe7ec;
+            --shadow: 0 10px 24px rgba(23, 46, 56, .12)
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: var(--mint);
+            font: 500 16px/1.4 Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif
+        }
+
+        .app {
+            display: grid;
+            grid-template-rows: 72px 1fr;
+            grid-template-columns: 220px 1fr;
+            gap: 14px;
+            height: 100dvh;
+            padding: 14px
+        }
+
+        .brand img {
+            width: 60px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .topbar {
+            grid-column: 1/-1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--panel);
+            border-radius: 999px;
+            padding: 10px 16px;
+            box-shadow: var(--shadow)
+        }
+
+        .btns {
+            display: flex;
+            gap: 10px
+        }
+
+        .btn-circle {
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 50%;
+            box-shadow: var(--shadow);
+            display: grid;
+            place-items: center;
+            font-size: 18px;
+            cursor: pointer
+        }
+
+        .play {
+            background: #8ee38f
+        }
+
+        .save {
+            background: #f7a9bf
+        }
+
+        .fwd {
+            background: #ffd46b
+        }
+
+        .back {
+            background: #bcd4ff
+        }
+
+        .rail {
+            background: var(--panel);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center
+        }
+
+        .pill {
+            width: 100%;
+            padding: 14px 8px;
+            border-radius: 16px;
+            color: #2b3c47;
+            font-weight: 800;
+            text-align: center;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .05), var(--shadow)
+        }
+
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 30%;
+            overflow: hidden;
+            gap: 14px;
+            padding: 0 20px;
+        }
+
+        .workspace {
+            position: relative;
+            min-height: 300px;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            background: #e8f4f7
+        }
+
+        .workspace:after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+            pointer-events: none
+        }
+
+        #blocklyDiv {
+            position: absolute;
+            inset: 0
+        }
+
+        .code {
+            background: var(--panel);
+            border-radius: 18px;
+            padding: 14px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 0
+        }
+
+        .code pre {
+            margin: 0;
+            padding: 14px;
+            border-radius: 12px;
+            background: #0d1117;
+            color: #c9d1d9;
+            overflow: auto;
+            min-height: 140px;
+            flex: 1;
+            font: 500 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
+        }
+
+        /* Simple modal */
+        .box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 5px 10px;
+            gap: 5px;
+        }
+
+        .box1 {
+            display: flex;
+            align-items: center;
+        }
+
+        .row {
+            text-align: center;
+        }
+
+        .box2 {
+            display: flex;
+        }
+
+        .box button {
+            padding: 10px 15px;
+            background-color: #DDDDDD;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 5px 2px 5px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            color: black;
+            font-size: 16px;
+            transition: all 500ms ease;
+        }
+
+        .box button:hover {
+            background: linear-gradient(to right, #fffb00, #d6f3ff);
+        }
+
+        #motorSelectionModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000
+        }
+
+        #motorSelectionModal {
+            width: 300px;
+            margin: 10% auto;
+            padding: 20px;
+            background: linear-gradient(to right, #ffdede, #13f7ff);
+            border-radius: 10px;
+            height: fit-content;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        }
+
+        #motorSelectionModal h3 {
+            margin: 0 0 10px 0
+        }
+
+        #motorSelectionModal .row {
+            margin: 6px 0
+        }
+
+        #ledPinSelectionModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000
+        }
+
+        /* LED pin modal overlay, same behavior as other modals */
+        #ledPinSelectionModal {
+            width: 300px;
+            margin: auto;
+            padding: 20px;
+            background: rgba(192, 192, 192, 0.4);
+            /* Silver color with transparency */
+            border-radius: 10px;
+            height: fit-content;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            backdrop-filter: blur(10px);
+            /* Apply blur effect to the background */
+            -webkit-backdrop-filter: blur(10px);
+            /* For Safari support */
+            border: 1px solid rgba(192, 192, 192, 0.4);
+            /* Optional: adds a light border */
+        }
+
+
+
+        @media screen and (max-width: 1200px) {
+            .app {
+                grid-template-columns: 1fr;
+                width: 99vw;
+            }
+
+            .rail {
+                display: none;
+            }
+
+            .main {
+                grid-template-columns: 1fr 30%;
+                overflow: auto;
+            }
+        }
+
+        /* Servo modal styling */
+        #servoSelectionModal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            z-index: 1000;
+            background: rgba(0, 0, 0, .35);
+        }
+
+        #servoSelectionModal .servo-box {
+            width: 320px;
+            margin: 10% auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            /* semi-transparent white background */
+            background-image: linear-gradient(45deg, rgba(80, 218, 211, 0.3), rgba(171, 216, 247, 0.3), rgba(195, 150, 248, 0.3));
+            backdrop-filter: blur(10px);
+            /* Apply blur effect */
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            font-family: system-ui, sans-serif;
+        }
+
+        #servoSelectionModal h3 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .servo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .servo-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            background: #f4f7fb;
+            cursor: pointer;
+        }
+
+        .servo-row input[type="radio"] {
+            margin: 0;
+        }
+
+        .servo-name {
+            min-width: 80px;
+            font-weight: 600;
+        }
+
+        .servo-pins {
+            display: flex;
+            gap: 4px;
+        }
+
+        .pin {
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .pin-gnd {
+            background: #555;
+        }
+
+        .pin-vcc {
+            background: #e74c3c;
+        }
+
+        .pin-sig {
+            background: #3498db;
+        }
+
+        .servo-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .servo-actions button {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            background: #ddd;
+            transition: background .2s;
+        }
+
+        .servo-actions button:hover {
+            background: #ccc;
+        }
+
+        .blocklyText {
+            font-size: 16px !important;
+        }
+
+        .blocklyHtmlInput,
+        .blocklyDropdownText {
+            font-size: 16px !important;
+        }
+
+        /* ==== EXTRA DESIGN / THEME FROM CODE A ==== */
+
+        /* fallback base colours (unused once gradients apply) */
+        .block-while .blocklyPath {
+            fill: #facc15;
+        }
+
+        .block-ifelse .blocklyPath {
+            fill: #fb923c;
+        }
+
+        .block-doonoff .blocklyPath {
+            fill: #38bdf8;
+        }
+
+        .block-servo .blocklyPath {
+            fill: #a855f7;
+        }
+
+        .led_block .blocklyPath
+
+        /* Blockly main SVG area */
+        .blocklySvg {
+            background: #e8f4f7 !important;
+        }
+
+        .blocklyMainBackground {
+            fill: #ffffff !important;
+        }
+
+        .blocklyToolboxDiv {
+            background: rgba(15, 23, 42, 0.9) !important;
+            border-radius: 16px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+        }
+
+        .blocklyTreeLabel {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            fill: #e5e7eb !important;
+        }
+
+        .blocklyTreeRow.blocklyTreeSelected {
+            background: linear-gradient(135deg,
+                    rgba(56, 189, 248, 1),
+                    rgb(0, 98, 255)) !important;
+            border-radius: 999px;
+        }
+
+        .blocklyFlyoutBackground {
+            fill: rgba(15, 23, 42, 1) !important;
+        }
+
+        .blocklyFlyoutLabelText {
+            fill: #9ca3af !important;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+
+        .blocklyScrollbarHandle {
+            fill: rgba(148, 163, 184, 0.9) !important;
+        }
+
+        .blocklyScrollbarBackground {
+            fill: transparent !important;
+        }
+
+        .blocklyText {
+            fill: #000000 !important;
+        }
+
+        /* Remove the solid blue insertion block (ghost block while dragging)  */
+        .blocklyInsertionMarker>.blocklyPath {
+            fill: none !important;
+            stroke: none !important;
+            stroke-width: 2px !important;
+        }
+
+        .blocklyInsertionMarker>.blocklyPathLight {
+            display: none !important;
+        }
+
+        /* ===== LIGHT, ATTRACTIVE GRADIENTS ===== */
+
+        /* default gradient for ALL blocks */
+        .block-grad-any .blocklyPath {
+            fill: url(#gradDefault) !important;
+            stroke: rgba(15, 23, 42, 0.25);
+            stroke-width: 1px;
+            stroke-linejoin: round;
+            paint-order: stroke;
+            box-shadow: 1px 1px 5px rgba(255, 1, 1, 0.2);
+        }
+
+        /* overrides for specific block types (different colors) */
+        .block-while .blocklyPath {
+            fill: url(#gradLoop) !important;
+        }
+
+        .block-doonoff .blocklyPath {
+            fill: url(#gradled) !important;
+        }
+
+        .block-servo .blocklyPath {
+            fill: url(#gradServo) !important;
+        }
+
+        .block-porton .blocklyPath {
+            fill: url(#gradPorton) !important;
+        }
+
+        .block_dc .blocklyPath {
+            fill: url(#graddc);
+        }
+
+        .led_block .blocklyPath {
+            fill: url(#gradled1);
+            box-shadow: url(#dropShadow1);
+            stroke: url(#stroke1);
+        }
+
+        .box button {
+            background: linear-gradient(to top, #BBE8F2 0%, #2685BF 50%, #BBE8F2 100%);
+            color: black;
+            border-radius: 50px;
+            border: #3D9DD9 1px solid;
+            box-shadow: 1px 1px 10px rgba(28, 153, 216, 0.416);
+        }
+
+        .blocklyMainBackground {
+            fill: #ffffff !important;
+            /* Light yellow background */
+        }
+
+        .zelos-renderer.rndmfg_glass-theme .blocklyText,
+        .zelos-renderer.rndmfg_glass-theme .blocklyFlyoutLabelText .blocklyText {
+            font-family: "Playwrite NO", cursive;
+            font-optical-sizing: auto;
+            font-weight: 500;
+            font-style: normal;
+            /* Replace 'Arial' with your preferred font */
+        }
+
+        /* Make sure the dropdown field has proper width and padding to avoid overlap */
+        .blocklyDropdownText {
+            background-color: #000000 !important;
+            /* Black background */
+            color: white !important;
+            /* White text */
+            padding: 4px 8px !important;
+            /* Add padding to avoid clipping */
+            border: 1px solid #aaa !important;
+            /* Light border */
+            border-radius: 4px !important;
+            /* Rounded corners */
+            min-width: 100px !important;
+            /* Ensure enough width */
+            text-align: center !important;
+            /* Center the text */
+        }
+    </style>
+    <div class="app">
+        <!-- Top bar -->
+        <div class="topbar">
+            <div class="brand" style="display:flex;align-items:center;gap:10px">
+                <img src="./img/logo.png" alt="weblogo" style="width:60px; height:auto; object-fit:contain;">
+                <div style="font-size:24px;font-weight:900;text-transform:uppercase">rndmfg</div>
+            </div>
+            <div class="btns">
+                <!-- New: Connect Board button (for USB on desktop) -->
+                <button class="btn-circle back" id="btnConnect" title="Connect Board">
+                    <i class="fa-solid fa-plug"></i>
+                </button>
+                <button class="btn-circle play" id="btnRun" title="Run ▶"><i class="fa-solid fa-copy"></i></button>
+                <button class="btn-circle save" id="btnSave" title="Save"><i class="fa-solid fa-download"></i></button>
+                <button class="btn-circle fwd" id="btnLoad" title="Load"><i class="fa-brands fa-openid"></i></button>
+                <button class="btn-circle back" id="btnClear" title="Clear"><i class="fa-solid fa-broom"></i></button>
+            </div>
+        </div>
+
+        <!-- Left rail -->
+        <aside class="rail">
+            <div class="pill" style="background:#d9f4fb">Motion</div>
+            <div class="pill" style="background:#ffd8d1">Ideas</div>
+            <div class="pill" style="background:#fff2b9">Search</div>
+            <div class="pill" style="background:#e4dcff">Brain</div>
+        </aside>
+
+        <!-- Main -->
+        <section class="main">
+            <div class="workspace">
+                <div id="blocklyDiv"></div>
+            </div>
+            <div class="code">
+                <header style="display:flex;justify-content:space-between;align-items:center">
+                    <strong>Python (generated)</strong><small id="status">ready</small>
+                </header>
+                <pre id="pyOut"># drag & drop blocks to generate Python…</pre>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toolbox -->
+    <xml id="toolbox" style="display:none">
+
+        <category name="Digitalout" colour="#81d4ed">
+            <block type="led"></block>
+            <block type="led2"></block>
+        </category>
+        <category name="Delay" colour="#92e08d">
+            <block type="servo"></block>
+            <block type="dc_motor"></block>
+        </category>
+    </xml>
+
+    <!-- Port selection modal -->
+    <div id="portSelectionModal">
+        <div class="box">
+            <h3>Select Port(s)</h3>
+            <div class="box1">
+                <div class="row"><label><input type="checkbox" id="port2"> P2</label></div>
+                <div class="row"><label><input type="checkbox" id="port3"> P3</label></div>
+                <div class="row"><label><input type="checkbox" id="port4"> P4</label></div>
+                <div class="row"><label><input type="checkbox" id="port5"> P5</label></div>
+                <div class="row"><label><input type="checkbox" id="port6"> P6</label></div>
+                <div class="row"><label><input type="checkbox" id="port7"> P7</label></div>
+                <div class="row"><label><input type="checkbox" id="port8"> P8</label></div>
+                <div class="row"><label><input type="checkbox" id="port9"> P9</label></div>
+            </div>
+            <div class="box2">
+                <div class="row"><label><input type="checkbox" id="port10"> P10</label></div>
+                <div class="row"><label><input type="checkbox" id="port11"> P11</label></div>
+                <div class="row"><label><input type="checkbox" id="port12"> P12</label></div>
+                <div class="row"><label><input type="checkbox" id="port13"> P13</label></div>
+                <div class="row"><label><input type="checkbox" id="port14"> P14</label></div>
+                <div class="row"><label><input type="checkbox" id="port15"> P15</label></div>
+                <div class="row"><label><input type="checkbox" id="port16"> P16</label></div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+                <button onclick="savePortSelection()">Save</button>
+                <button onclick="closePortModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Motor selection modal -->
+    <div id="motorSelectionModal" style="display:none;">
+        <div class="box">
+            <h3>Select Motor(s)</h3>
+            <div class="box1">
+                <div class="row"><label><input type="checkbox" id="motorM1"> M1</label></div>
+                <div class="row"><label><input type="checkbox" id="motorM2"> M2</label></div>
+                <div class="row"><label><input type="checkbox" id="motorM3"> M3</label></div>
+                <div class="row"><label><input type="checkbox" id="motorM4"> M4</label></div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+                <button onclick="saveMotorSelection()">Save</button>
+                <button onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Servo selection modal -->
+    <div id="servoSelectionModal" style="display:none;">
+        <div class="servo-box">
+            <h3>Select Servo Port</h3>
+
+            <div class="servo-list">
+                <label class="servo-row">
+                    <input type="radio" name="servoPort" value="C8">
+                    <div class="servo-name">Servo S1</div>
+                    <div class="servo-pins">
+                        <span class="pin pin-gnd">GND</span>
+                        <span class="pin pin-vcc">VCC</span>
+                        <span class="pin pin-sig">SIG</span>
+                    </div>
+                </label>
+
+                <label class="servo-row">
+                    <input type="radio" name="servoPort" value="S2">
+                    <div class="servo-name">Servo S2</div>
+                    <div class="servo-pins">
+                        <span class="pin pin-gnd">GND</span>
+                        <span class="pin pin-vcc">VCC</span>
+                        <span class="pin pin-sig">SIG</span>
+                    </div>
+                </label>
+
+                <label class="servo-row">
+                    <input type="radio" name="servoPort" value="S3">
+                    <div class="servo-name">Servo S3</div>
+                    <div class="servo-pins">
+                        <span class="pin pin-gnd">GND</span>
+                        <span class="pin pin-vcc">VCC</span>
+                        <span class="pin pin-sig">SIG</span>
+                    </div>
+                </label>
+
+                <label class="servo-row">
+                    <input type="radio" name="servoPort" value="S4">
+                    <div class="servo-name">Servo S4</div>
+                    <div class="servo-pins">
+                        <span class="pin pin-gnd">GND</span>
+                        <span class="pin pin-vcc">VCC</span>
+                        <span class="pin pin-sig">SIG</span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="servo-actions">
+                <button type="button" onclick="saveServoSelection()">Save</button>
+                <button type="button" onclick="closeServoModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!-- LED pin selection modal -->
+    <div id="ledPinSelectionModal">
+        <div class="box">
+            <h3>Select LED Pin(s)</h3>
+
+            <div class="box1">
+                <div class="row"><label><input type="checkbox" id="ledPinD2"> D2</label></div>
+                <div class="row"><label><input type="checkbox" id="ledPinD3"> D3</label></div>
+                <div class="row"><label><input type="checkbox" id="ledPinD4"> D4</label></div>
+                <div class="row"><label><input type="checkbox" id="ledPinD5"> D5</label></div>
+                <div class="row"><label><input type="checkbox" id="ledPinG0"> G0</label></div>
+                <div class="row"><label><input type="checkbox" id="ledPinD7"> D7</label></div>
+                <div class="row"><label><input type="checkbox" id="ledPinD8"> D8</label></div>
+                <div class="row"><label><input type="checkbox" id="ledPinD9"> D9</label></div>
+            </div>
+
+            <div class="savebtn" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+                <button type="button" onclick="saveLedPinSelection()">Save</button>
+                <button type="button" onclick="closeLedPinModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        /* --- wait for Blockly --- */
+        async function waitForBlockly(timeoutMs = 5000) {
+            const t0 = Date.now();
+            while (!(window.__blocklyLoaded && window.Blockly && Blockly.Python)) {
+                await new Promise(r => setTimeout(r, 50));
+                if (Date.now() - t0 > timeoutMs) break;
+            }
+            return !!(window.__blocklyLoaded && window.Blockly && Blockly.Python);
+        }
+
+        //   ---------------  block diclration here -------------//
+        function defineBlocks() {
+            Blockly.defineBlocksWithJsonArray([
+                {
+                    type: "start",
+                    message0: "Start",
+                    output: null,
+                    nextStatement: null
+                },
+                {
+                    type: "servo",
+                    message0: "servo pin %1 %2 %3 speed %4",
+                    args0: [
+                        {
+                            type: "field_image",
+                            src: "./img/Chips_Chips_Show.png",
+                            width: 15,
+                            height: 15,
+                            alt: "",
+                            name: "img"
+                        },
+                        {
+                            type: "field_label",
+                            name: "Servo_port",
+                            text: ""
+                        },
+                        {
+                            type: "field_number",
+                            name: "Angle",
+                            value: 90,
+                            min: 0,
+                            max: 180,
+                            precision: 1
+                        },
+                        {
+                            type: "field_number",
+                            name: "speed",
+                            value: 50,
+                            min: 0,
+                            max: 100,
+                            precision: 1
+                        }
+
+                    ],
+                    color: "#81d4ed",
+                    previousStatement: null,
+                    nextStatement: null,
+                    extensions: ["servo_image_click", "servo_color"]
+                },
+                {
+                    type: 'led',
+                    message0: "LED pin %1 %2 %3 %4",
+                    args0: [
+                        {
+                            type: 'field_image',
+                            src: "./img/Chips_Chips_Show.png",
+                            width: 15,
+                            height: 15,
+                            alt: "",
+                            name: "img"
+                        },
+                        {
+                            type: "field_label",
+                            name: 'ports',
+                            text: ""
+                        },
+                        {
+                            type: "field_number",
+                            name: "value1",
+
+                        }
+                        , {
+                            type: "field_number",
+                            name: "value2"
+                        }
+                    ],
+                    color: "#81d4ed",
+                    previousStatement: null,
+                    nextStatement: null,
+                    extensions: ["led_img", "led_style"]
+                },
+                {
+                    type: 'dc_motor',
+                    message0: 'Dc pins %1 %2 %3 ',
+                    args0: [{
+                        type: 'field_image',
+                        src: './img/Chips_Chips_Show.png',
+                        width: 15,
+                        height: 15,
+                        alt: "",
+                        name: "img"
+                    },
+                    {
+                        type: 'field_label',
+                        name: 'port',
+                        text: ""
+                    },
+                    {
+                        type: "field_number",
+                        name: 'speed',
+                    }
+                    ],
+                    color: "#81d4ed",
+                    previousStatement: null,
+                    nextStatement: null,
+                    extensions: ['dc_img', "dc_color"]
+                },
+                {
+                    type: 'led2',
+                    message0: "LED pin %1 %2 %3 %4",
+                    args0: [
+                        {
+                            type: 'field_image',
+                            src: "./img/Chips_Chips_Show.png",
+                            width: 15,
+                            height: 15,
+                            alt: "",
+                            name: "img"
+                        },
+                        {
+                            type: "field_label",
+                            name: 'ports',
+                            text: ""
+                        },
+                        {
+                            type: "field_number",
+                            name: "value1",
+
+                        }
+                        , {
+                            type: "field_number",
+                            name: "value2"
+                        }
+                    ],
+                    color: "#81d4ed",
+                    previousStatement: null,
+                    nextStatement: null,
+                    extensions: ["led_img", "led_style2"]
+                },
+            ])
+            // ------------------extention for image ---------------//
+            Blockly.Extensions.register('servo_image_click', function () {
+                const image = this.getField('img');
+                if (!image) return;
+                image.setOnClickHandler(() => {
+                    openServoSelectionModal(this);
+                });
+            });
+
+            Blockly.Extensions.register('led_img', function () {
+                const img = this.getField('img');
+                if (!img) return;
+                img.setOnClickHandler(() => {
+                    openLedPinSelectionModal(this);
+                })
+            })
+
+            Blockly.Extensions.register('dc_img', function () {
+                const img = this.getField('img');
+                if (!img) return;
+                img.setOnClickHandler(() => {
+                    openMotorSelectionModal(this);
+                })
+            })
+            //------------------extention for color -------------------
+            Blockly.Extensions.register('servo_color', function () {
+                const block = this;
+                block.setOnChange(function () {
+                    if (block.svgGroup_) {
+                        block.svgGroup_.classList.add('block-servo');
+                    }
+                });
+            });
+            Blockly.Extensions.register('led_style', function () {
+                const block = this;
+                block.setOnChange(function () {
+                    if (block.svgGroup_) {
+                        block.svgGroup_.classList.add('block-doonoff');
+                    }
+                })
+            })
+            Blockly.Extensions.register('dc_color', function () {
+                const block = this;
+                block.setOnChange(function () {
+                    if (__blocklyLoaded) {
+                        block.svgGroup_.classList.add('block_dc')
+                    }
+                })
+            })
+            Blockly.Extensions.register('led_style2', function () {
+                const block = this;
+                block.setOnChange(function () {
+                    if (block.svgGroup_) {
+                        block.svgGroup_.classList.add('led_block');
+                    }
+                })
+            })
+        }
+
+
+
+        // ---------------code generator---------------
+        function defineGenerators() {
+            const py = Blockly.Python;
+            py['start'] = () => 'start()\n def start():\n'
+
+            Blockly.Python['servo'] = function (block) {
+                const Servoport = block.getFieldValue('Servo_port') || '';
+                const Angle = block.getFieldValue('Angle') || 90;
+                const speed = block.getFieldValue('speed') || 50;
+
+                if (!Servoport) {
+                    return "# no port selected \n"
+                }
+                return `\n servo_port(${Servoport},${Angle},${speed})\n`;
+            };
+
+            Blockly.Python['led'] = function (block) {
+                const ledport = block.getFieldValue('ports' || '');
+                const val1 = block.getFieldValue('value1' || 1000);
+                const val2 = block.getFieldValue('value2' || 1000);
+                if (!ledport) {
+                    return "# no port select yet\n";
+                }
+                return `n\ led_port(${ledport},${val1},${val2})\n`;
+            };
+            Blockly.Python['dc_motor'] = function (block) {
+                const dcport = block.getFieldValue('port' || "");
+                const speed = block.getFieldValue('speed' || 50);
+                if (!dcport) {
+                    return "# no dc pin selected\n";
+                }
+                return `\n dc_pin(${dcport},${speed})\n`;
+            };
+            Blockly.Python['led2'] = function (block) {
+                const ledport = block.getFieldValue('ports' || '');
+                const val1 = block.getFieldValue('value1' || 1000);
+                const val2 = block.getFieldValue('value2' || 1000);
+                if (!ledport) {
+                    return "# no port select yet\n";
+                }
+                return `n\ led_port(${ledport},${val1},${val2})\n`;
+            };
+        }
+        /* --- define blocks (including modal-driven blocks) --- */
+        /* ==== SERVO MODAL ==== */
+        let currentServoBlock = null;
+
+        function openServoSelectionModal(block) {
+            currentServoBlock = block;
+            const currentPort = block.getFieldValue('Servo_port') || '';
+
+            const radios = document.querySelectorAll('#servoSelectionModal input[name="servoPort"]');
+            radios.forEach(r => {
+                r.checked = (r.value === currentPort);
+            });
+
+            document.getElementById('servoSelectionModal').style.display = 'block';
+        }
+
+        function closeServoModal() {
+            document.getElementById('servoSelectionModal').style.display = 'none';
+            currentServoBlock = null;
+        }
+
+        function saveServoSelection() {
+            if (!currentServoBlock) { closeServoModal(); return; }
+
+            const radios = document.querySelectorAll('#servoSelectionModal input[name="servoPort"]');
+            let selectedValue = '';
+            radios.forEach(r => {
+                if (r.checked) selectedValue = r.value;
+            });
+
+            if (!selectedValue) {
+                alert('Please select a servo port.');
+                return;
+            }
+
+            currentServoBlock.setFieldValue(selectedValue, 'Servo_port');
+            closeServoModal();
+        }
+        /* ==== LED PIN MODAL ==== */
+        let currentLedBlock = null;
+        const LED_PIN_NAMES = ['D2', 'D3', 'D4', 'D5', 'G0', 'D7', 'D8', 'D9'];
+
+        function openLedPinSelectionModal(block) {
+            currentLedBlock = block;
+
+            const txt = block.getFieldValue('ports') || '';   // 🔴 changed PINS → PORTS
+            const selected = new Set(
+                txt.split(',').map(s => s.trim()).filter(Boolean)
+            );
+
+            LED_PIN_NAMES.forEach(pin => {
+                const cb = document.getElementById('ledPin' + pin);
+                if (cb) cb.checked = selected.has(pin);
+            });
+
+            document.getElementById('ledPinSelectionModal').style.display = 'block';
+        }
+
+        function closeLedPinModal() {
+            document.getElementById('ledPinSelectionModal').style.display = 'none';
+            currentLedBlock = null;
+        }
+
+        function saveLedPinSelection() {
+            if (!currentLedBlock) {
+                closeLedPinModal();
+                return;
+            }
+
+            const sel = [];
+            LED_PIN_NAMES.forEach(pin => {
+                const cb = document.getElementById('ledPin' + pin);
+                if (cb && cb.checked) sel.push(pin);
+            });
+
+            const label = sel.length ? sel.join(',') : '—';
+            currentLedBlock.setFieldValue(label, 'ports');   // 🔴 changed PINS → PORTS
+
+            closeLedPinModal();
+        }
+
+        let currentMotorBlock = null;
+
+        function openMotorSelectionModal(block) {
+            currentMotorBlock = block;
+            const selectedMotors = new Set((block.getFieldValue('port') || '').split(',').map(s => s.trim()));
+
+            ['M1', 'M2', 'M3', 'M4'].forEach(motor => {
+                const checkbox = document.getElementById('motor' + motor);
+                if (checkbox) checkbox.checked = selectedMotors.has(motor);
+            });
+
+            document.getElementById('motorSelectionModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('motorSelectionModal').style.display = 'none';
+        }
+
+        function saveMotorSelection() {
+            if (!currentMotorBlock) { closeModal(); return; }
+
+            const selected = [];
+            ['M1', 'M2', 'M3', 'M4'].forEach(motor => {
+                const checkbox = document.getElementById('motor' + motor);
+                if (checkbox && checkbox.checked) selected.push(motor);
+            });
+
+            const label = selected.length ? selected.join(',') : '—';
+            currentMotorBlock.setFieldValue(label, 'port');
+
+            closeModal();
+        }
+
+        // ---- Add multiple gradient defs into Blockly SVG (from Code A) ----
+        function addGradientDefs() {
+            const svg = document.querySelector('svg.blocklySvg');
+
+            if (!svg) {
+                setTimeout(addGradientDefs, 50);  // Wait for Blockly to load if not found
+                return;
+            }
+
+            let defs = svg.querySelector('defs');
+            if (!defs) {
+                defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+                svg.prepend(defs);
+            }
+
+            // Add gradient definitions
+            function makeLinearGradient(id, stops) {
+                const grad = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+                grad.setAttribute('id', id);
+                grad.setAttribute('x1', '0%');
+                grad.setAttribute('y1', '0%');
+                grad.setAttribute('x2', '0%');
+                grad.setAttribute('y2', '100%');
+
+                stops.forEach(s => {
+                    const stop = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+                    stop.setAttribute('offset', s.offset);
+                    stop.setAttribute('stop-color', s.color);
+                    stop.setAttribute('stop-opacity', s.opacity);
+                    grad.appendChild(stop);
+                });
+                defs.appendChild(grad);
+            }
+            //---------------------------------------find color--------------
+
+            // -------------this please to change the color ------------------
+            // Defining various gradient IDs
+            makeLinearGradient('gradDefault', [
+                { offset: '0%', color: '#BCD4FF', opacity: 1 },
+                { offset: '50%', color: '#FED36B', opacity: 1 },
+                { offset: '100%', color: '#F6A9BE', opacity: 1 }
+            ]);
+            makeLinearGradient('gradled', [
+                { offset: '0%', color: 'transparent', opacity: 1 },
+                { offset: '50%', color: '#FFEDF3', opacity: 1 },
+                { offset: '100%', color: 'transparent', opacity: 1 }
+            ]);
+
+            makeLinearGradient('gradServo', [
+                { offset: '0%', color: '#a855f7', opacity: 1 },
+                { offset: '100%', color: '#ec4899', opacity: 1 }
+            ]);
+
+            makeLinearGradient('graddc', [
+                { offset: '0%', color: 'rgba(187, 232, 242, 1)' }, // #BBE8F2 with full opacity
+                { offset: '50%', color: 'rgba(38, 133, 191, 1)' }, // #2685BF with full opacity
+                { offset: '100%', color: 'rgba(187, 232, 242, 1)' } // #BBE8F2 with full opacity
+            ]);
+
+            makeLinearGradient('gradled1', [
+                { offset: '0%', color: '#8DD8FF', opacity: 1 },
+                { offset: '50%', color: '#BBFBFF', opacity: 1 },
+                { offset: '100%', color: '#4E71FF', opacity: 1 }
+            ]);
+            // Add filter for drop shadow effect
+            function createDropShadowFilter(id, dx, dy, stdDeviation, color) {
+                const filter = document.createElementNS("http://www.w3.org/2000/svg", "filter");
+                filter.setAttribute('id', id);
+                filter.setAttribute('x', '-50%');
+                filter.setAttribute('y', '-50%');
+                filter.setAttribute('width', '200%');
+                filter.setAttribute('height', '200%');
+
+                const feDropShadow = document.createElementNS("http://www.w3.org/2000/svg", "feDropShadow");
+                feDropShadow.setAttribute('dx', dx);
+                feDropShadow.setAttribute('dy', dy);
+                feDropShadow.setAttribute('stdDeviation', stdDeviation);
+                feDropShadow.setAttribute('flood-color', color);
+                filter.appendChild(feDropShadow);
+
+                defs.appendChild(filter);
+            }
+
+            // Create a Stroke Filter
+            function createStrokeFilter(id, color, width) {
+                const filter = document.createElementNS("http://www.w3.org/2000/svg", "filter");
+                filter.setAttribute('id', id);
+                filter.setAttribute('x', '-50%');
+                filter.setAttribute('y', '-50%');
+                filter.setAttribute('width', '200%');
+                filter.setAttribute('height', '200%');
+
+                const feStroke = document.createElementNS("http://www.w3.org/2000/svg", "feStroke");
+                feStroke.setAttribute('color', color);
+                feStroke.setAttribute('width', width);
+
+                filter.appendChild(feStroke);
+
+
+
+                defs.appendChild(filter);
+            }
+
+
+            // Create Drop Shadow Filters
+            createDropShadowFilter('dropShadow1', 2, 2, 4, '#0CF25D');  // Drop shadow for 'start' block
+            createDropShadowFilter('dropShadow2', 2, 2, 5, '#BBE8F2 ');  // Drop shadow for 'dc_motor' block
+
+            // Create Stroke Filters
+            createStrokeFilter('stroke1', '#2685BF', 1);  // Stroke for 'start' block
+            createStrokeFilter('stroke2', '#B771E5', 1);  // Stroke for 'dc_motor' block
+
+        }
+
+
+        // Apply gradient, stroke, and shadow to a specific block
+        function applyGradientAndShadowToBlock(block) {
+            const blockPath = block.svgGroup_?.querySelector('.blocklyPath');
+
+            if (!blockPath) return;
+
+            // Apply gradient (example)
+            blockPath.setAttribute('fill', 'url(#gradDefault)');
+
+            // Apply combined shadow and stroke filter based on block type
+            if (block.type === 'start') {
+                blockPath.setAttribute('filter', 'url(#dropShadow1)');  // Apply drop shadow
+                blockPath.setAttribute('stroke', '#2685BF');  // Apply stroke color directly
+                blockPath.setAttribute('stroke-width', '1');  // Apply stroke width
+            }
+            else if (block.type === 'dc_motor') {
+                blockPath.setAttribute('filter', 'url(#dropShadow2)');  // Apply drop shadow
+                blockPath.setAttribute('stroke', '#2685BF');  // Apply stroke color directly
+                blockPath.setAttribute('stroke-width', '2');
+            }
+            else {
+                blockPath.setAttribute('filter', 'url(#dropShadow1)');
+                blockPath.setAttribute('stroke', '#2685BF');
+                blockPath.setAttribute('stroke-width', '2');
+            }
+        }
+
+        function setupGradientAndShadowOnBlocks() {
+            Blockly.getMainWorkspace().addChangeListener((e) => {
+                if (e.type === Blockly.Events.BLOCK_CREATE || e.type === Blockly.Events.BLOCK_CHANGE) {
+                    applyToAllBlocks();
+                }
+            });
+        }
+
+        // Apply gradient and shadow to all blocks in the workspace
+        function applyToAllBlocks() {
+            const blocks = Blockly.getMainWorkspace().getAllBlocks();
+            blocks.forEach(block => {
+                applyGradientAndShadowToBlock(block);  // Call the function to apply gradient, shadow, and stroke
+            });
+        }
+
+        // Remove blue selection glow (from Code A)
+        function killBlueSelection() {
+            const style = document.createElement('style');
+            style.textContent = `
+        svg.blocklySvg .blocklySelected {
+          filter: none !important;
+        }
+        svg.blocklySvg .blocklySelected > .blocklyPath {
+          stroke: none !important;
+          stroke-width: 0 !important;
+        }
+        svg.blocklySvg .blocklySelected > .blocklyPathLight {
+          display: none !important;
+        }
+      `;
+            document.head.appendChild(style);
+        }
+        // ===== Desktop: Web Serial USB to STM32 =====
+        let stm32Port = null;
+        let stm32Writer = null;
+
+        // Ask user to choose the STM32 serial port and open it
+        async function connectStm32() {
+            if (!("serial" in navigator)) {
+                alert("Web Serial not supported. Use Chrome or Edge on desktop.");
+                return;
+            }
+
+            try {
+                // User selects the board (USB CDC device)
+                stm32Port = await navigator.serial.requestPort();
+                await stm32Port.open({ baudRate: 115200 }); // must match your firmware
+
+                const textEncoder = new TextEncoder();
+                stm32Writer = stm32Port.writable.getWriter();
+
+                alert("Connected to STM32 over USB!");
+                console.log("STM32: serial port opened");
+            } catch (e) {
+                console.error("Failed to open serial port:", e);
+                alert("Failed to connect to board.");
+            }
+        }
+
+        // Build the protocol message for STM32
+        function buildPycodeMessage(code, entry = "main") {
+            const size = code.length;
+            return `PYCODE\nENTRY:${entry}\nSIZE:${size}\n\n${code}`;
+        }
+
+        // Send Python code to STM32 over Web Serial
+        // Send a simple REPL command (no PYCODE header, just plain text)
+        async function sendCommandToStm32(cmd) {
+            if (!stm32Port || !stm32Writer) {
+                alert("Board not connected. Click 'Connect Board' first.");
+                return;
+            }
+
+            try {
+                // MicroPython REPL likes \r\n
+                const payload = cmd + "\r\n";
+                const data = new TextEncoder().encode(payload);
+                await stm32Writer.write(data);
+                console.log("Sent to STM32 CMD:", JSON.stringify(payload));
+            } catch (e) {
+                console.error("Error sending command to STM32:", e);
+                alert("Failed to send command to STM32.");
+            }
+        }
+
+        /* --- app start --- */
+        async function start() {
+            // Connect Board button (desktop Web Serial)
+            document.getElementById("btnConnect").onclick = () => {
+                connectStm32();
+            };
+
+            const ok = await waitForBlockly();
+            if (!ok) { console.error('Blockly/Python failed to load'); return; }
+
+            // Theme from Code A (glass style)
+            const Theme = Blockly.Theme.defineTheme('rndmfg_glass', {
+                base: Blockly.Themes.Classic,
+                componentStyles: {
+                    workspaceBackgroundColour: '#ffffff',
+                    toolboxBackgroundColour: 'rgba(15,23,42,0.7)',
+                    toolboxForegroundColour: '#e5e7eb',
+                    flyoutBackgroundColour: 'rgba(15,23,42,0.95)',
+                    flyoutForegroundColour: '#e5e7eb',
+                    flyoutOpacity: 1,
+                    insertionMarkerColour: '#38bdf8',
+                    insertionMarkerOpacity: 0.0,
+                    scrollbarColour: '#94a3b8',
+                    selectedGlowColour: 'transparent',
+                    selectedGlowOpacity: 0,
+                    selectedGlowSize: 1,
+                    cursorColour: '#facc15'
+                }
+            });
+
+            defineBlocks();
+            defineGenerators();
+
+            const workspace = Blockly.inject('blocklyDiv', {
+                toolbox: document.getElementById('toolbox'),
+                theme: Theme,
+                renderer: 'zelos',
+                grid: { spacing: 30, length: 1, colour: '#b7b7b7', snap: true },
+                trashcan: true,
+                zoom: { controls: true, wheel: true, startScale: 0.9, maxScale: 2.0, minScale: 0.4 },
+                move: { scrollbars: true, drag: true, wheel: true },
+                sound: true
+            });
+
+            // Apply design enhancements (gradients + selection fix)
+            addGradientDefs();           // Add gradient definitions for blocks
+            killBlueSelection();         // Remove the default blue selection glow
+            setupGradientAndShadowOnBlocks();
+
+
+            // Python output
+            const pyOut = document.getElementById('pyOut');
+
+            // runs whenever blocks change – just for on-screen preview
+            function updateCode() {
+                const code = Blockly.Python.workspaceToCode(workspace);
+                pyOut.textContent = code || '# (no blocks yet)';
+
+                // Optional live preview message (not used for upload)
+                try {
+                    window.ReactNativeWebView?.postMessage(
+                        JSON.stringify({ type: 'py_preview', code })
+                    );
+                } catch (e) { }
+            }
+
+            workspace.addChangeListener(updateCode);
+            updateCode();
+
+            // ========== RUN / UPLOAD BUTTON ==========
+            document.getElementById('btnRun').onclick = async () => {
+                const code = Blockly.Python.workspaceToCode(workspace);
+
+                // 1) Desktop: if Web Serial is available and port is open → send ONLY "start()"
+                if (window.navigator && "serial" in window.navigator && stm32Port && stm32Writer) {
+                    await sendCommandToStm32(code);
+                    return;
+                }
+
+                // 2) Mobile app (React Native WebView) → send full python as before
+                if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
+                    const payload = {
+                        type: "python_upload",
+                        code: code,
+                        entry_function: "main",
+                    };
+                    window.ReactNativeWebView.postMessage(JSON.stringify(payload));
+                    alert("Code sent to mobile app (no USB yet).");
+                    return;
+                }
+
+                // 3) Fallback: normal browser (no Web Serial, no RN) → copy to clipboard
+                alert("Python copied to clipboard (no STM32 connection).");
+                navigator.clipboard?.writeText(code);
+            };
+
+
+            document.getElementById('btnSave').onclick = () => {
+                const xml = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(workspace));
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(new Blob([xml], { type: 'text/xml' }));
+                a.download = 'program.xml';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            };
+
+            document.getElementById('btnLoad').onclick = async () => {
+                const [f] = await (window.showOpenFilePicker
+                    ? await showOpenFilePicker({
+                        types: [{ description: 'XML', accept: { 'text/xml': ['.xml'] } }]
+                    }).catch(() => [])
+                    : []);
+                let text = '';
+                if (f) {
+                    text = await (await f.getFile()).text();
+                } else {
+                    const inp = document.createElement('input');
+                    inp.type = 'file';
+                    inp.accept = '.xml,text/xml';
+                    inp.onchange = async e => {
+                        const file = e.target.files[0];
+                        const t = await file.text();
+                        loadXml(t);
+                    };
+                    inp.click();
+                    return;
+                }
+                loadXml(text);
+            };
+
+            function loadXml(text) {
+                if (!text) return;
+                workspace.clear();
+                Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(text), workspace);
+            }
+
+            document.getElementById('btnClear').onclick = () => {
+                workspace.clear();
+                updateCode();
+            };
+
+
+            const demo = `
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="start" x="40" y="40">
+    <field name="NAME">when Start Button clicked</field>
+  </block>
+</xml>`;
+            Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(demo), workspace);
+        }
+
+        window.addEventListener('load', start);
+    </script>
+</body>
+
+</html>

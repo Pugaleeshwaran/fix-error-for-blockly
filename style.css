@@ -1,0 +1,532 @@
+
+    :root {
+      --mint: #cfeff2;
+      --panel: #f7fbfc;
+      --grid: #cfe7ec;
+      --shadow: 0 10px 24px rgba(23, 46, 56, .12)
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: var(--mint);
+      font: 500 16px/1.4 Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif
+    }
+
+    .app {
+      display: grid;
+      grid-template-rows: 72px 1fr;
+      grid-template-columns: 220px 1fr;
+      gap: 14px;
+      height: 100dvh;
+      padding: 14px
+    }
+
+    .brand img {
+      width: 60px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .topbar {
+      grid-column: 1/-1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--panel);
+      border-radius: 999px;
+      padding: 10px 16px;
+      box-shadow: var(--shadow)
+    }
+
+    .btns {
+      display: flex;
+      gap: 10px
+    }
+
+    .btn-circle {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 50%;
+      box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      cursor: pointer
+    }
+
+    .play {
+      background: #8ee38f
+    }
+
+    .save {
+      background: #f7a9bf
+    }
+
+    .fwd {
+      background: #ffd46b
+    }
+
+    .back {
+      background: #bcd4ff
+    }
+
+    .rail {
+      background: var(--panel);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center
+    }
+
+    .pill {
+      width: 100%;
+      padding: 14px 8px;
+      border-radius: 16px;
+      color: #2b3c47;
+      font-weight: 800;
+      text-align: center;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .05), var(--shadow)
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 30%;
+      overflow: hidden;
+      gap: 14px;
+      padding: 0 20px;
+    }
+
+    .workspace {
+      position: relative;
+      min-height: 300px;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      background: #e8f4f7
+    }
+
+    .workspace:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+      pointer-events: none
+    }
+
+    #blocklyDiv {
+      position: absolute;
+      inset: 0
+    }
+
+    .code {
+      background: var(--panel);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0
+    }
+
+    .code pre {
+      margin: 0;
+      padding: 14px;
+      border-radius: 12px;
+      background: #0d1117;
+      color: #c9d1d9;
+      overflow: auto;
+      min-height: 140px;
+      flex: 1;
+      font: 500 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
+    }
+
+    /* Simple modal */
+    .box {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 5px 10px;
+      gap: 5px;
+    }
+
+    .box1 {
+      display: flex;
+      align-items: center;
+    }
+
+    .row {
+      text-align: center;
+    }
+
+    .box2 {
+      display: flex;
+    }
+
+    .box button {
+      padding: 10px 15px;
+      background-color: #DDDDDD;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 5px 2px 5px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      color: black;
+      font-size: 16px;
+      transition: all 500ms ease;
+    }
+
+    .box button:hover {
+      background: linear-gradient(to right, #fffb00, #d6f3ff);
+    }
+
+    #portSelectionModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000
+    }
+
+    #portSelectionModal {
+      width: 300px;
+      margin: 10% auto;
+      padding: 20px;
+      background: linear-gradient(145deg, #F5EEDD, #7AE2CF);
+      border-radius: 10px;
+      height: fit-content;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      font-size: 16px;
+      font-family: Work Sans, sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 500;
+      font-style: normal;
+
+    }
+
+    #portSelectionModal h3 {
+      margin: 0 0 10px 0
+    }
+
+    #portSelectionModal .row {
+      margin: 6px 0
+    }
+
+    #motorSelectionModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000
+    }
+
+    #motorSelectionModal {
+      width: 300px;
+      margin: 10% auto;
+      padding: 20px;
+      background: linear-gradient(to right, #ffdede, #13f7ff);
+      border-radius: 10px;
+      height: fit-content;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    }
+
+    #motorSelectionModal h3 {
+      margin: 0 0 10px 0
+    }
+
+    #motorSelectionModal .row {
+      margin: 6px 0
+    }
+
+    #ledPinSelectionModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000
+    }
+
+    /* LED pin modal overlay, same behavior as other modals */
+    #ledPinSelectionModal {
+      width: 300px;
+      margin: auto;
+      padding: 20px;
+      background: rgba(192, 192, 192, 0.4);
+      /* Silver color with transparency */
+      border-radius: 10px;
+      height: fit-content;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      backdrop-filter: blur(10px);
+      /* Apply blur effect to the background */
+      -webkit-backdrop-filter: blur(10px);
+      /* For Safari support */
+      border: 1px solid rgba(192, 192, 192, 0.4);
+      /* Optional: adds a light border */
+    }
+
+
+
+    @media screen and (max-width: 1200px) {
+      .app {
+        grid-template-columns: 1fr;
+        width: 99vw;
+      }
+
+      .rail {
+        display: none;
+      }
+
+      .main {
+        grid-template-columns: 1fr 30%;
+        overflow: auto;
+      }
+    }
+
+    /* Servo modal styling */
+    #servoSelectionModal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 1000;
+      background: rgba(0, 0, 0, .35);
+    }
+
+    #servoSelectionModal .servo-box {
+      width: 320px;
+      margin: 10% auto;
+      padding: 20px;
+      background: linear-gradient(45deg, #50DAD3, #ABD8F7, #C396F8);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .25);
+      font-family: system-ui, sans-serif;
+    }
+
+    #servoSelectionModal h3 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .servo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .servo-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: #f4f7fb;
+      cursor: pointer;
+    }
+
+    .servo-row input[type="radio"] {
+      margin: 0;
+    }
+
+    .servo-name {
+      min-width: 80px;
+      font-weight: 600;
+    }
+
+    .servo-pins {
+      display: flex;
+      gap: 4px;
+    }
+
+    .pin {
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .pin-gnd {
+      background: #555;
+    }
+
+    .pin-vcc {
+      background: #e74c3c;
+    }
+
+    .pin-sig {
+      background: #3498db;
+    }
+
+    .servo-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .servo-actions button {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #ddd;
+      transition: background .2s;
+    }
+
+    .servo-actions button:hover {
+      background: #ccc;
+    }
+
+    .blocklyText {
+      font-size: 16px !important;
+    }
+
+    .blocklyHtmlInput,
+    .blocklyDropdownText {
+      font-size: 16px !important;
+    }
+
+    /* ==== EXTRA DESIGN / THEME FROM CODE A ==== */
+
+    /* fallback base colours (unused once gradients apply) */
+    .block-while .blocklyPath {
+      fill: #facc15;
+    }
+
+    .block-ifelse .blocklyPath {
+      fill: #fb923c;
+    }
+
+    .block-doonoff .blocklyPath {
+      fill: #38bdf8;
+    }
+
+    .block-servo .blocklyPath {
+      fill: #a855f7;
+    }
+
+    /* Blockly main SVG area */
+    .blocklySvg {
+      background: #e8f4f7 !important;
+    }
+
+    .blocklyMainBackground {
+      fill: #ffffff !important;
+    }
+
+    .blocklyToolboxDiv {
+      background: rgba(15, 23, 42, 0.9) !important;
+      border-radius: 16px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+    }
+
+    .blocklyTreeLabel {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      fill: #e5e7eb !important;
+    }
+
+    .blocklyTreeRow.blocklyTreeSelected {
+      background: linear-gradient(135deg,
+          rgba(56, 189, 248, 1),
+          rgb(0, 98, 255)) !important;
+      border-radius: 999px;
+    }
+
+    .blocklyFlyoutBackground {
+      fill: rgba(15, 23, 42, 1) !important;
+    }
+
+    .blocklyFlyoutLabelText {
+      fill: #9ca3af !important;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .blocklyScrollbarHandle {
+      fill: rgba(148, 163, 184, 0.9) !important;
+    }
+
+    .blocklyScrollbarBackground {
+      fill: transparent !important;
+    }
+
+    .blocklyText {
+      fill: #000000 !important;
+    }
+
+    /* Remove the solid blue insertion block (ghost block while dragging)  */
+    .blocklyInsertionMarker>.blocklyPath {
+      fill: none !important;
+      stroke: none !important;
+      stroke-width: 2px !important;
+    }
+
+    .blocklyInsertionMarker>.blocklyPathLight {
+      display: none !important;
+    }
+
+    /* ===== LIGHT, ATTRACTIVE GRADIENTS ===== */
+
+    /* default gradient for ALL blocks */
+    .block-grad-any .blocklyPath {
+      fill: url(#gradDefault) !important;
+      stroke: rgba(15, 23, 42, 0.25);
+      stroke-width: 1px;
+      stroke-linejoin: round;
+      paint-order: stroke;
+      box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    /* overrides for specific block types (different colors) */
+    .block-while .blocklyPath {
+      fill: url(#gradLoop) !important;
+    }
+
+    .block-ifelse .blocklyPath {
+      fill: url(#gradIfElse) !important;
+    }
+
+    .block-doonoff .blocklyPath {
+      fill: url(#gradDigital) !important;
+    }
+
+    .block-servo .blocklyPath {
+      fill: url(#gradServo) !important;
+    }
+
+    .block-porton .blocklyPath {
+      fill: url(#gradPorton) !important;
+    }
+
+    .box button {
+      background: linear-gradient(to top, #c5c5c5 0%, #FED36B 50%, #f6ffa7 100%);
+      color: black;
+      border-radius: 50px;
+      border: #FED36B 1px solid;
+      box-shadow: 1px 1px 5px rgba(239, 255, 9, 0.801);
+    }
+
+    .blocklyMainBackground {
+      fill: #ffffff !important;
+      /* Light yellow background */
+    }
+
+    .zelos-renderer.rndmfg_glass-theme .blocklyText,
+    .zelos-renderer.rndmfg_glass-theme .blocklyFlyoutLabelText .blocklyText {
+      font-family: "Playwrite NO", cursive;
+      font-optical-sizing: auto;
+      font-weight: 500;
+      font-style: normal;
+      /* Replace 'Arial' with your preferred font */
+    }
