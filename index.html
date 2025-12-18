@@ -407,23 +407,6 @@
         /* ==== EXTRA DESIGN / THEME FROM CODE A ==== */
 
         /* fallback base colours (unused once gradients apply) */
-        .block-while .blocklyPath {
-            fill: #facc15;
-        }
-
-        .block-ifelse .blocklyPath {
-            fill: #fb923c;
-        }
-
-        .block-doonoff .blocklyPath {
-            fill: #38bdf8;
-        }
-
-        .block-servo .blocklyPath {
-            fill: #a855f7;
-        }
-
-        .led_block .blocklyPath
 
         /* Blockly main SVG area */
         .blocklySvg {
@@ -494,41 +477,45 @@
 
         /* ===== LIGHT, ATTRACTIVE GRADIENTS ===== */
 
-        /* default gradient for ALL blocks */
-        .block-grad-any .blocklyPath {
-            fill: url(#gradDefault) !important;
-            stroke: rgba(15, 23, 42, 0.25);
-            stroke-width: 1px;
-            stroke-linejoin: round;
-            paint-order: stroke;
-            box-shadow: 1px 1px 5px rgba(255, 1, 1, 0.2);
-        }
 
-        /* overrides for specific block types (different colors) */
-        .block-while .blocklyPath {
-            fill: url(#gradLoop) !important;
-        }
+        /* --------------   class or id class declare here below -------------------- */
+        /* add stoke aslo here*/
 
-        .block-doonoff .blocklyPath {
+        .led_style>.blocklyPath {
             fill: url(#gradled) !important;
+            stroke-width: 1;
+            stroke: #8C041D;
         }
 
-        .block-servo .blocklyPath {
+        .block-servo>.blocklyPath {
             fill: url(#gradServo) !important;
+            stroke-width: 1;
+            stroke: #F266C1;
         }
 
-        .block-porton .blocklyPath {
-            fill: url(#gradPorton) !important;
-        }
-
-        .block_dc .blocklyPath {
+        .block_dc>.blocklyPath {
             fill: url(#graddc);
+            stroke-width: 1px;
+            stroke: #F2C744;
         }
 
-        .led_block .blocklyPath {
-            fill: url(#gradled1);
-            box-shadow: url(#dropShadow1);
-            stroke: url(#stroke1);
+        .dummy_block>.blocklyPath {
+            fill: url(#dummy_style);
+            stroke-width: 1px;
+            stroke: #79A637;
+        }
+
+        .temp_style>.blocklyPath {
+            fill: url(#temp_style);
+            stroke-width: 1px;
+            stroke: #73168C;
+
+        }
+
+        .ultra_style>.blocklyPath {
+            fill: url(#ultra_style);
+            stroke-width: 1px;
+            stroke: #593A28;
         }
 
         .box button {
@@ -617,11 +604,15 @@
 
         <category name="Digitalout" colour="#81d4ed">
             <block type="led"></block>
-            <block type="led2"></block>
+            <block type="dummy"></block>
         </category>
         <category name="Delay" colour="#92e08d">
             <block type="servo"></block>
             <block type="dc_motor"></block>
+        </category>
+        <category name="sensor" colour="#C06DFA">
+            <block type="temp"></block>
+            <block type="ultra"></block>
         </category>
     </xml>
 
@@ -866,8 +857,8 @@
                     extensions: ['dc_img', "dc_color"]
                 },
                 {
-                    type: 'led2',
-                    message0: "LED pin %1 %2 %3 %4",
+                    type: 'dummy',
+                    message0: "dummy %1 %2 %3 %4",
                     args0: [
                         {
                             type: 'field_image',
@@ -895,8 +886,66 @@
                     color: "#81d4ed",
                     previousStatement: null,
                     nextStatement: null,
-                    extensions: ["led_img", "led_style2"]
+                    extensions: ["led_img", "dummy_style"]
                 },
+                {
+                    type: "temp",
+                    message0: "tempture %1 %2 %3",
+                    args0: [
+                        {
+                            type: 'field_image',
+                            src: "./img/Chips_Chips_Show.png",
+                            width: 15,
+                            height: 15,
+                            alt: "",
+                            name: "img"
+                        }
+                        ,
+                        {
+                            type: "field_label",
+                            name: 'ports',
+                            text: ""
+                        },
+                        {
+                            type: "field_number",
+                            name: "value1",
+
+                        }
+                    ],
+                    color: '#BF754B',
+                    previousStatement: null,
+                    nextStatement: null,
+                    extensions: ['temp_style']
+                },
+                {
+                    type: "ultra",
+                    message0: "ultra %1 %2 %3",
+                    args0: [
+                        {
+                            type: 'field_image',
+                            src: "./img/Chips_Chips_Show.png",
+                            width: 15,
+                            height: 15,
+                            alt: "",
+                            name: "img"
+                        }
+                        ,
+                        {
+                            type: "field_label",
+                            name: 'ports',
+                            text: ""
+                        },
+                        {
+                            type: "field_number",
+                            name: "value1",
+
+                        }
+                    ],
+                    color: '#281259',
+                    previousStatement: null,
+                    nextStatement: null,
+                    extensions: ['ultra_style']
+                }
             ])
             // ------------------extention for image ---------------//
             Blockly.Extensions.register('servo_image_click', function () {
@@ -922,6 +971,7 @@
                     openMotorSelectionModal(this);
                 })
             })
+
             //------------------extention for color -------------------
             Blockly.Extensions.register('servo_color', function () {
                 const block = this;
@@ -935,7 +985,7 @@
                 const block = this;
                 block.setOnChange(function () {
                     if (block.svgGroup_) {
-                        block.svgGroup_.classList.add('block-doonoff');
+                        block.svgGroup_.classList.add('led_style');
                     }
                 })
             })
@@ -947,11 +997,27 @@
                     }
                 })
             })
-            Blockly.Extensions.register('led_style2', function () {
+            Blockly.Extensions.register('dummy_style', function () {
                 const block = this;
                 block.setOnChange(function () {
                     if (block.svgGroup_) {
-                        block.svgGroup_.classList.add('led_block');
+                        block.svgGroup_.classList.add('dummy_block');
+                    }
+                })
+            })
+            Blockly.Extensions.register('temp_style', function () {
+                const block = this;
+                block.setOnChange(function () {
+                    if (block.svgGroup_) {
+                        block.svgGroup_.classList.add('temp_style')
+                    }
+                })
+            })
+            Blockly.Extensions.register('ultra_style', function () {
+                const block = this;
+                block.setOnChange(function () {
+                    if (block.svgGroup_) {
+                        block.svgGroup_.classList.add('ultra_style')
                     }
                 })
             })
@@ -992,7 +1058,7 @@
                 }
                 return `\n dc_pin(${dcport},${speed})\n`;
             };
-            Blockly.Python['led2'] = function (block) {
+            Blockly.Python['dummy'] = function (block) {
                 const ledport = block.getFieldValue('ports' || '');
                 const val1 = block.getFieldValue('value1' || 1000);
                 const val2 = block.getFieldValue('value2' || 1000);
@@ -1000,6 +1066,12 @@
                     return "# no port select yet\n";
                 }
                 return `n\ led_port(${ledport},${val1},${val2})\n`;
+            };
+            Blockly.Python['temp'] = function (block) {
+                return "temp is here";
+            };
+            Blockly.Python['ultra'] = function (block) {
+                return "ultra is here";
             };
         }
         /* --- define blocks (including modal-driven blocks) --- */
@@ -1151,34 +1223,45 @@
             }
             //---------------------------------------find color--------------
 
-            // -------------this please to change the color ------------------
+            // ------------- change the grandient  color here ------------------
             // Defining various gradient IDs
             makeLinearGradient('gradDefault', [
-                { offset: '0%', color: '#BCD4FF', opacity: 1 },
-                { offset: '50%', color: '#FED36B', opacity: 1 },
-                { offset: '100%', color: '#F6A9BE', opacity: 1 }
+                { offset: '0%', color: '#BBE8F2', opacity: 1 },
+                { offset: '50%', color: '#2685BF', opacity: 1 },
+                { offset: '100%', color: '#BBE8F2', opacity: 1 }
             ]);
             makeLinearGradient('gradled', [
-                { offset: '0%', color: 'transparent', opacity: 1 },
-                { offset: '50%', color: '#FFEDF3', opacity: 1 },
-                { offset: '100%', color: 'transparent', opacity: 1 }
+                { offset: '0%', color: '#BF0413', opacity: 1 },
+                { offset: '50%', color: '#BF0B2C', opacity: 1 },
+                { offset: '100%', color: '#8C041D', opacity: 1 }
             ]);
 
             makeLinearGradient('gradServo', [
-                { offset: '0%', color: '#a855f7', opacity: 1 },
-                { offset: '100%', color: '#ec4899', opacity: 1 }
+                { offset: '0%', color: '#F2ACC6', opacity: 1 },
+                { offset: '50%', color: '#F266C1', opacity: 1 },
+                { offset: '100%', color: '#F2ACC6', opacity: 1 }
             ]);
 
             makeLinearGradient('graddc', [
-                { offset: '0%', color: 'rgba(187, 232, 242, 1)' }, // #BBE8F2 with full opacity
-                { offset: '50%', color: 'rgba(38, 133, 191, 1)' }, // #2685BF with full opacity
-                { offset: '100%', color: 'rgba(187, 232, 242, 1)' } // #BBE8F2 with full opacity
+                { offset: '0%', color: '#F2A922' }, // #BBE8F2 with full opacity
+                { offset: '50%', color: '#D97A07' }, // #2685BF with full opacity
+                { offset: '100%', color: '#F2921D' } // #BBE8F2 with full opacity
             ]);
 
-            makeLinearGradient('gradled1', [
-                { offset: '0%', color: '#8DD8FF', opacity: 1 },
-                { offset: '50%', color: '#BBFBFF', opacity: 1 },
-                { offset: '100%', color: '#4E71FF', opacity: 1 }
+            makeLinearGradient('dummy_style', [
+                { offset: '0%', color: '#B2F252', opacity: 1 },
+                { offset: '50%', color: '#79A637', opacity: 1 },
+                { offset: '100%', color: '#EFF299', opacity: 1 }
+            ]);
+            makeLinearGradient('temp_style', [
+                { offset: '0%', color: '#9F2CBF', opacity: 1 },
+                { offset: '50%', color: '#73168C', opacity: 1 },
+                { offset: '100%', color: '#9F2CBF', opacity: 1 }
+            ]);
+            makeLinearGradient('ultra_style', [
+                { offset: '0%', color: '#8C5946', opacity: 1 },
+                { offset: '50%', color: '#593A28', opacity: 1 },
+                { offset: '100%', color: '#D9B29C', opacity: 1 }
             ]);
             // Add filter for drop shadow effect
             function createDropShadowFilter(id, dx, dy, stdDeviation, color) {
@@ -1219,19 +1302,19 @@
                 defs.appendChild(filter);
             }
 
-
+            // ------------add dropshadow here-------------
             // Create Drop Shadow Filters
-            createDropShadowFilter('dropShadow1', 2, 2, 4, '#0CF25D');  // Drop shadow for 'start' block
-            createDropShadowFilter('dropShadow2', 2, 2, 5, '#BBE8F2 ');  // Drop shadow for 'dc_motor' block
-
-            // Create Stroke Filters
-            createStrokeFilter('stroke1', '#2685BF', 1);  // Stroke for 'start' block
-            createStrokeFilter('stroke2', '#B771E5', 1);  // Stroke for 'dc_motor' block
+            createDropShadowFilter('blueShadow', 2, 2, 5, '#2685BF');  // Drop shadow for 'start' block
+            createDropShadowFilter('dcshodow', 2, 2, 5, '#D97A07');
+            createDropShadowFilter('ledshodow', 2, 5, 5, '#D99CA7');
+            createDropShadowFilter('servoshodow', 2, 2, 5, '#F279BC');
+            createDropShadowFilter('dummyshadow', 2, 3, 5, '#79A637');// Drop shadow for 'dc_motor' block
+            createDropShadowFilter('tempshadow', 2, 3, 5, '#593A28');
 
         }
 
 
-        // Apply gradient, stroke, and shadow to a specific block
+        //Apply gradient, stroke, and shadow to a specific block
         function applyGradientAndShadowToBlock(block) {
             const blockPath = block.svgGroup_?.querySelector('.blocklyPath');
 
@@ -1240,21 +1323,30 @@
             // Apply gradient (example)
             blockPath.setAttribute('fill', 'url(#gradDefault)');
 
+            // -------------declare shadow here ------------            
             // Apply combined shadow and stroke filter based on block type
             if (block.type === 'start') {
-                blockPath.setAttribute('filter', 'url(#dropShadow1)');  // Apply drop shadow
+                blockPath.setAttribute('filter', 'url(#blueShadow)');  // Apply drop shadow
                 blockPath.setAttribute('stroke', '#2685BF');  // Apply stroke color directly
                 blockPath.setAttribute('stroke-width', '1');  // Apply stroke width
             }
             else if (block.type === 'dc_motor') {
-                blockPath.setAttribute('filter', 'url(#dropShadow2)');  // Apply drop shadow
-                blockPath.setAttribute('stroke', '#2685BF');  // Apply stroke color directly
-                blockPath.setAttribute('stroke-width', '2');
+                blockPath.setAttribute('filter', 'url(#dcshodow)');  // Apply drop shadow
+            }
+            else if (block.type === 'led') {
+                blockPath.setAttribute('filter', 'url(#ledshodow)')
+            }
+            else if (block.type === 'servo') {
+                blockPath.setAttribute('filter', 'url(#servoshodow)')
+            }
+            else if (block.type == 'dummy') {
+                blockPath.setAttribute('filter', 'url(#dummyshadow)')
+            }
+            else if (block.type == 'temp') {
+                blockPath.setAttribute('filter', 'url(#tempshadow)')
             }
             else {
-                blockPath.setAttribute('filter', 'url(#dropShadow1)');
-                blockPath.setAttribute('stroke', '#2685BF');
-                blockPath.setAttribute('stroke-width', '2');
+                blockPath.setAttribute('filter', 'url(#blueShadow)');
             }
         }
 
@@ -1487,11 +1579,11 @@
 
 
             const demo = `
-<xml xmlns="https://developers.google.com/blockly/xml">
-  <block type="start" x="40" y="40">
-    <field name="NAME">when Start Button clicked</field>
-  </block>
-</xml>`;
+    <xml xmlns="https://developers.google.com/blockly/xml">
+        <block type="start" x="40" y="40" deletable='false'>
+        <field name="NAME">when Start Button clicked</field>
+    </block>
+    </xml>`;
             Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(demo), workspace);
         }
 
