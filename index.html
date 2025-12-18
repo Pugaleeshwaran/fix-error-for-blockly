@@ -298,6 +298,7 @@
 
         /* Servo modal styling */
         #servoSelectionModal {
+            display: none;
             position: fixed;
             inset: 0;
             display: none;
@@ -617,7 +618,7 @@
     </xml>
 
     <!-- Port selection modal -->
-    <div id="portSelectionModal">
+    <div id="portSelectionModal" style="display: none;">
         <div class="box">
             <h3>Select Port(s)</h3>
             <div class="box1">
@@ -1484,7 +1485,49 @@
             addGradientDefs();           // Add gradient definitions for blocks
             killBlueSelection();         // Remove the default blue selection glow
             setupGradientAndShadowOnBlocks();
+            // Custom sound logic from Code A
+            const audio = workspace.getAudioManager();
+            audio.SOUNDS_ = {};
 
+            audio.load(["./sounds/block_merge.mpeg"], "click");
+            audio.load(["./sounds/cancel.mp3"], "delete");
+            audio.load(["./sounds/block_merge.mpeg"], "dragstart");
+            audio.load(["./sounds/block_merge.mpeg"], "dragend");
+            audio.load(["./sounds/error.mp3"], "error");
+            audio.load(["./sounds/disconnect.mp3"], "disconnect");
+
+            // DRAG START
+            // workspace.addChangeListener((ev) => {
+            //   if (ev.type === Blockly.Events.BLOCK_DRAG && ev.isStart) {
+            //     audio.play("dragstart");
+            //   }
+            // });
+
+            // DRAG END
+            // workspace.addChangeListener((ev) => {
+            //   if (ev.type === Blockly.Events.BLOCK_DRAG && ev.isEnd) {
+            //     audio.play("dragend");
+            //   }
+            // });
+
+            // BLOCK SNAP / MOVE
+            workspace.addChangeListener((ev) => {
+                if (ev.type === Blockly.Events.BLOCK_MOVE && ev.isStart) {
+                    audio.play("click");
+                }
+            });
+
+            // BLOCK DELETE
+            workspace.addChangeListener((ev) => {
+                if (ev.type === Blockly.Events.BLOCK_DELETE) {
+                    audio.play("delete");
+                }
+            });
+
+            // INVALID CONNECTION (error sound)
+            Blockly.Connection.prototype.highlightForError = function () {
+                audio.play("error");
+            };
 
             // Python output
             const pyOut = document.getElementById('pyOut');
