@@ -2660,7 +2660,6 @@
     }
 
 
-
     // ===== Desktop: Web Serial USB to STM32 =====
     /* ============================================
        ==========  WEB SERIAL USB (FIXED) =========
@@ -3194,34 +3193,49 @@ ${code}
 
       // ========== RUN / UPLOAD BUTTON ==========
       document.getElementById('btnRun').onclick = async () => {
+
+        // Desktop + USB connected → RUN user.py
+        if (stm32Port && stm32Writer) {
+          await runUserPyOnBoard();
+          return;
+        }
+
+        // Mobile WebView
+        if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
+          const code = Blockly.Python.workspaceToCode(workspace);
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({
+              type: "python_upload",
+              code: code,
+              entry_function: "main",
+            })
+          );
+          alert("Code sent to mobile app");
+          return;
+        }
+
+        alert("No board connected");
+      };
+      document.getElementById('btnSave').onclick = async () => {
         const code = Blockly.Python.workspaceToCode(workspace);
 
-        // 1) Desktop: if Web Serial is available and port is open → send ONLY "start()"
-        if (window.navigator && "serial" in window.navigator && stm32Port && stm32Writer) {
-          await sendCommandToStm32(code);
+        if (!code.trim()) {
+          alert("No code to save");
           return;
         }
 
-        // 2) Mobile app (React Native WebView) → send full python as before
-        if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
-          const payload = {
-            type: "python_upload",
-            code: code,
-            entry_function: "main",
-          };
-          window.ReactNativeWebView.postMessage(JSON.stringify(payload));
-          alert("Code sent to mobile app (no USB yet).");
+        // USB connected → write user.py
+        if (stm32Port && stm32Writer) {
+          await writeUserPyToBoard(code);
+          document.getElementById("responseDisplay").innerText =
+            "user.py saved on board";
           return;
         }
 
-        // 3) Fallback: normal browser (no Web Serial, no RN) → copy to clipboard
-        alert("Python copied to clipboard (no STM32 connection).");
-        navigator.clipboard?.writeText(code);
-      };
-
-
-      document.getElementById('btnSave').onclick = () => {
-        const xml = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(workspace));
+        // fallback → XML download
+        const xml = Blockly.Xml.domToPrettyText(
+          Blockly.Xml.workspaceToDom(workspace)
+        );
         const a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([xml], { type: 'text/xml' }));
         a.download = 'program.xml';
@@ -3263,7 +3277,6 @@ ${code}
         workspace.clear();
         updateCode();
       };
-
 
       const demo = `
 <xml xmlns="https://developers.google.com/blockly/xml">
