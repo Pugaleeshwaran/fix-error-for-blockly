@@ -2704,53 +2704,93 @@
     }
 
     /* ---- SEND PYTHON TO STM32 (RAW PASTE MODE — FIXED) ---- */
-    async function sendCommandToStm32(code) {
+    // async function sendCommandToStm32(code) {
+    //   if (!stm32Port || !stm32Writer) {
+    //     alert("Board not connected");
+    //     return;
+    //   }
+
+    //   // Auto-fix locked stream if necessary
+    //   if (stm32Port.writable.locked && !stm32Writer) {
+    //     console.warn("Stream locked — resetting writer");
+    //     stm32Writer = stm32Port.writable.getWriter();
+    //   }
+
+    // try {
+    //   console.log("Uploading via raw paste mode...");
+
+    //   // Enter paste mode (send the control character)
+    //   await stm32Writer.write(stm32Encoder.encode("\x05"));
+
+    //   // Send full code block
+    //   await stm32Writer.write(stm32Encoder.encode(code));
+
+    //   // Execute the code (using a control character for execution)
+    //   await stm32Writer.write(stm32Encoder.encode("\x04"));
+    //   await stm32Writer.write(stm32Encoder.encode("\r\n"));
+
+    //   console.log("Upload complete.");
+    // } catch (err) {
+    //   console.error("Serial upload error:", err);
+    // }
+    //}
+
+    /* ==== WRITE user.py TO BOARD ==== */
+    async function writeUserPyToBoard(code) {
       if (!stm32Port || !stm32Writer) {
         alert("Board not connected");
         return;
       }
 
-      // Auto-fix locked stream if necessary
-      if (stm32Port.writable.locked && !stm32Writer) {
-        console.warn("Stream locked — resetting writer");
-        stm32Writer = stm32Port.writable.getWriter();
+      const payload =
+        `@@START
+${code}
+@@END
+`;
+
+      try {
+        await stm32Writer.write(stm32Encoder.encode(payload));
+        console.log("user.py sent to board");
+      } catch (e) {
+        console.error("USB write error:", e);
+        alert("USB write failed");
+      }
+    }
+    async function runUserPyOnBoard() {
+      if (!stm32Port || !stm32Writer) {
+        alert("Board not connected");
+        return;
       }
 
       try {
-        console.log("Uploading via raw paste mode...");
-
-        // Enter paste mode (send the control character)
-        await stm32Writer.write(stm32Encoder.encode("\x05"));
-
-        // Send full code block
-        await stm32Writer.write(stm32Encoder.encode(code));
-
-        // Execute the code (using a control character for execution)
-        await stm32Writer.write(stm32Encoder.encode("\x04"));
-        await stm32Writer.write(stm32Encoder.encode("\r\n"));
-
-        console.log("Upload complete.");
-      } catch (err) {
-        console.error("Serial upload error:", err);
+        await stm32Writer.write(
+          stm32Encoder.encode("RUN\n")
+        );
+        console.log("RUN command sent");
+      } catch (e) {
+        console.error("RUN failed:", e);
+        alert("Failed to run program");
       }
     }
-
 
     /* ---- OPTIONAL: DISCONNECT SAFELY ---- */
     async function disconnectStm32() {
       try {
         if (stm32Writer) {
-          await stm32Writer.close?.();
           stm32Writer.releaseLock();
         }
-        await stm32Port?.close?.();
+        if (stm32Port) {
+          await stm32Port.close();
+        }
+      } catch (e) {
+        console.error("Disconnect error:", e);
+      } finally {
         stm32Port = null;
         stm32Writer = null;
-        console.log("Disconnected.");
-      } catch (e) {
-        console.error("Error closing port:", e);
+        console.log("Disconnected");
       }
     }
+
     function handleBoardMessage(line) {
       console.log("Board:", line);
 
@@ -2793,8 +2833,6 @@
       }
     }
 
-
-
     // ------------------wifi-----------
     async function sendCodeToESP32_MQTT(code) {
       const mqttClient = mqtt.connect('wss://3921b8461cb747b593a333f2aced8435.s1.eu.hivemq.cloud:8884/mqtt', {
@@ -2819,7 +2857,7 @@
       // Connect to the MQTT broker
       mqttClient.on('connect', function () {
         console.log('Connected to HiveMQ broker');
-        mqttClient.publish('esp32/boot',`@@START \n ${code} \n @@END`);
+        mqttClient.publish('esp32/boot', `@@START \n ${code} \n @@END`);
 
         // Subscribe to the topics
         mqttClient.subscribe(topics, (err) => {
