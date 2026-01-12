@@ -547,7 +547,7 @@
     <!-- Top bar -->
     <div class="topbar">
       <div class="brand" style="display:flex;align-items:center;gap:10px">
-        <img src="./img/logo.png" alt="weblogo" style="width:60px; height:auto; object-fit:contain;">
+        <img src="./assets/blockly/logo.png" alt="weblogo" style="width:60px; height:auto; object-fit:contain;">
         <div style="font-size:24px;font-weight:900;text-transform:uppercase">rndmfg</div>
       </div>
       <div class="btns">
@@ -650,10 +650,10 @@
     </category>
     <category name="Digitalin" colour="#FFB56A">
       <block type="din_if_else"></block>
-      <block type="din_ir"></block>
       <block type="din_sound"></block>
-      <block type="din_metal"></block>
-      <block type="din_read"></block>
+      <block type="din_tilt"></block>
+      <block type="din_door"></block>
+      <block type="din_waterpump"></block>
     </category>
     <sep></sep>
     <category name="Logic" colour="#4C97FF">
@@ -851,7 +851,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -874,7 +874,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -915,7 +915,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -940,7 +940,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -971,7 +971,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1013,7 +1013,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1067,7 +1067,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1182,32 +1182,34 @@
           extensions: ["temp_style"]
         },
         {
-          type: "din_ir",
-          message0: "IR sensor pin %1 %2",
+          type: "din_sound",
+          message0: "SOUND %1 %2",
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
               name: "IMG"
-            }, {
+            },
+            {
               type: "field_label",
               name: "PORTS",
               text: ""
             }],
           style: "control_blocks",
           output: "Boolean",
-          extensions: ["temp_style", "led_pin_image_click"]
-        },
+          extensions: ["temp_style", "port_image_click"]
+        }
+        ,
         {
-          type: "din_sound",
-          message0: "digital  sensor pin %1 %2",
+          type: "din_tilt",
+          message0: "TILT %1 %2",
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1223,17 +1225,18 @@
           extensions: ["temp_style", "port_image_click"]
         },
         {
-          type: "din_metal",
-          message0: "Metal sensor pin %1 %2",
+          type: "din_door",
+          message0: "DOOR %1 %2",
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
               name: "IMG"
-            }, {
+            },
+            {
               type: "field_label",
               name: "PORTS",
               text: ""
@@ -1243,17 +1246,18 @@
           extensions: ["temp_style", "port_image_click"]
         },
         {
-          type: "din_read",
-          message0: "digital read pin %1 %2",
+          type: "din_waterpump",
+          message0: "WATER PUMP %1 %2",
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
               name: "IMG"
-            }, {
+            },
+            {
               type: "field_label",
               name: "PORTS",
               text: ""
@@ -1268,7 +1272,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1299,7 +1303,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1334,7 +1338,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1369,7 +1373,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1404,7 +1408,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1439,7 +1443,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1470,7 +1474,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1501,7 +1505,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1532,7 +1536,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1563,7 +1567,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1622,7 +1626,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1661,7 +1665,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1700,7 +1704,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1739,7 +1743,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1769,7 +1773,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1800,7 +1804,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1831,7 +1835,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1862,7 +1866,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1893,7 +1897,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1924,7 +1928,7 @@
           args0: [
             {
               type: "field_image",
-              src: "./img/Chips_Chips_Show.png",
+              src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
@@ -1932,7 +1936,7 @@
             },
             {
               type: "field_label",
-              name: "MOTORS",
+              name: "PORTS",
               text: ""
             },
             {
@@ -1946,7 +1950,7 @@
           colour: "#81d4ed",
           previousStatement: null,
           nextStatement: null,
-          extensions: ["motor_image_click", "servo_color"]
+          extensions: ["port_image_click", "servo_color"]
         },
       ]);
 
@@ -2302,17 +2306,6 @@
         return code;
       };
 
-
-
-      Blockly.Python['din_ir'] = function (block) {
-        const port = block.getFieldValue('PORTS') || '2';  // Default to port 2 if no port is selected
-
-        // Return the correct condition as a tuple
-        return [`robot.ir_detected(${port})`, Blockly.Python.ORDER_NONE];
-      };
-
-
-
       Blockly.Python['din_sound'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
 
@@ -2329,40 +2322,98 @@
 
         // If one port is selected, return code for that port only
         if (pins.length === 1) {
-          return [`get_value("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`get_sound("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If two ports are selected, use both for Trig and Echo
         if (pins.length === 2) {
-          return [`get_value("${pins[0]}", "${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`get_sound("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If more than two ports are selected, return the first two only
-        return [`get_value("${pins[0]}", "${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        return [`get_sound("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
+      Blockly.Python['din_tilt'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
 
-      Blockly.Python['din_metal'] = function (block) {
-        const port = block.getFieldValue('PORTS') || '2';
-        return [`robot.metal_detected(${port})`, Blockly.Python.ORDER_NONE];
-      };
-      Blockly.Python['din_read'] = function (block) {
-        const portsTxt = block.getFieldValue('PORTS') || ''; // Get selected pins from PORTS field
-        const pins = portsTxt.split(',').map(s => s.trim()).filter(Boolean); // Split the pins
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
 
-        // Check if there are selected pins
+        // If no ports are selected, show a warning message
         if (!pins.length) {
-          return "# din_read: no pins selected\n";  // If no pins, return placeholder
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
         }
 
-        // Generate Python code using the selected pins
-        let code = '';
-        pins.forEach(pin => {
-          code += `read_sensor(${pin})\n`;  // Generate the Python code for each pin
-        });
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`get_tilt("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
 
-        return [code, Blockly.Python.ORDER_NONE];
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`get_tilt("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`get_tilt("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
+      Blockly.Python['din_door'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
 
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`get_door("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`get_door("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`get_door("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+      Blockly.Python['din_waterpump'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`get_waterpump("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`get_waterpump("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`get_door("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
       Blockly.Python['mini_motor'] = function (block) {
         const speed = block.getFieldValue('SPEED') || 0;
         const motors = (block.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean);
@@ -2491,19 +2542,26 @@
         return ports.map(p => `${fn}(${p})\n`).join('');
       };
       Blockly.Python['steper'] = function (block) {
-        const speed = block.getFieldValue('SPEED') || 0;
-        const motors = (block.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean);
+        const speed = Number(block.getFieldValue('SPEED')) || 0;
+
+        const motors = (block.getFieldValue('PORTS') || '')
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+
+        // ALWAYS return a STRING
         if (motors.length === 0) {
-          return "# No motors selected\n";
+          return '# Stepper: no port selected\n';
         }
 
-        let code = "";
-        motors.forEach(motor => {
-          code += `get_values("${motors}",${speed})\n`;
-        });
+        if (motors.length === 1) {
+          return `get_steper("${motors[0]}", ${speed})\n`;
+        }
 
-        return code;
+        const portList = motors.map(p => `"${p}"`).join(', ');
+        return `get_steper(${portList}, ${speed})\n`;
       };
+      ;
     }
 
     /* --- modal wiring --- */
@@ -2863,13 +2921,7 @@
       else if (block.type === 'din_if_else') {
         blockPath.setAttribute('filter', 'url(#ultrashowdow)')
       }
-      else if (block.type === 'din_ir') {
-        blockPath.setAttribute('filter', 'url(#ultrashowdow)')
-      }
       else if (block.type === 'din_sound') {
-        blockPath.setAttribute('filter', 'url(#ultrashowdow)')
-      }
-      else if (block.type === 'tdin_metal') {
         blockPath.setAttribute('filter', 'url(#ultrashowdow)')
       }
       else if (block.type === 'tank_motor') {
@@ -2957,53 +3009,93 @@
     }
 
     /* ---- SEND PYTHON TO STM32 (RAW PASTE MODE — FIXED) ---- */
-    async function sendCommandToStm32(code) {
+    // async function sendCommandToStm32(code) {
+    //   if (!stm32Port || !stm32Writer) {
+    //     alert("Board not connected");
+    //     return;
+    //   }
+
+    //   // Auto-fix locked stream if necessary
+    //   if (stm32Port.writable.locked && !stm32Writer) {
+    //     console.warn("Stream locked — resetting writer");
+    //     stm32Writer = stm32Port.writable.getWriter();
+    //   }
+
+    // try {
+    //   console.log("Uploading via raw paste mode...");
+
+    //   // Enter paste mode (send the control character)
+    //   await stm32Writer.write(stm32Encoder.encode("\x05"));
+
+    //   // Send full code block
+    //   await stm32Writer.write(stm32Encoder.encode(code));
+
+    //   // Execute the code (using a control character for execution)
+    //   await stm32Writer.write(stm32Encoder.encode("\x04"));
+    //   await stm32Writer.write(stm32Encoder.encode("\r\n"));
+
+    //   console.log("Upload complete.");
+    // } catch (err) {
+    //   console.error("Serial upload error:", err);
+    // }
+    //}
+
+    /* ==== WRITE user.py TO BOARD ==== */
+    async function writeUserPyToBoard(code) {
       if (!stm32Port || !stm32Writer) {
         alert("Board not connected");
         return;
       }
 
-      // Auto-fix locked stream if necessary
-      if (stm32Port.writable.locked && !stm32Writer) {
-        console.warn("Stream locked — resetting writer");
-        stm32Writer = stm32Port.writable.getWriter();
+      const payload =
+        `@@START
+${code}
+@@END
+`;
+
+      try {
+        await stm32Writer.write(stm32Encoder.encode(payload));
+        console.log("user.py sent to board");
+      } catch (e) {
+        console.error("USB write error:", e);
+        alert("USB write failed");
+      }
+    }
+    async function runUserPyOnBoard() {
+      if (!stm32Port || !stm32Writer) {
+        alert("Board not connected");
+        return;
       }
 
       try {
-        console.log("Uploading via raw paste mode...");
-
-        // Enter paste mode (send the control character)
-        await stm32Writer.write(stm32Encoder.encode("\x05"));
-
-        // Send full code block
-        await stm32Writer.write(stm32Encoder.encode(code));
-
-        // Execute the code (using a control character for execution)
-        await stm32Writer.write(stm32Encoder.encode("\x04"));
-        await stm32Writer.write(stm32Encoder.encode("\r\n"));
-
-        console.log("Upload complete.");
-      } catch (err) {
-        console.error("Serial upload error:", err);
+        await stm32Writer.write(
+          stm32Encoder.encode("RUN\n")
+        );
+        console.log("RUN command sent");
+      } catch (e) {
+        console.error("RUN failed:", e);
+        alert("Failed to run program");
       }
     }
-
 
     /* ---- OPTIONAL: DISCONNECT SAFELY ---- */
     async function disconnectStm32() {
       try {
         if (stm32Writer) {
-          await stm32Writer.close?.();
           stm32Writer.releaseLock();
         }
-        await stm32Port?.close?.();
+        if (stm32Port) {
+          await stm32Port.close();
+        }
+      } catch (e) {
+        console.error("Disconnect error:", e);
+      } finally {
         stm32Port = null;
         stm32Writer = null;
-        console.log("Disconnected.");
-      } catch (e) {
-        console.error("Error closing port:", e);
+        console.log("Disconnected");
       }
     }
+
     function handleBoardMessage(line) {
       console.log("Board:", line);
 
@@ -3409,34 +3501,49 @@
 
       // ========== RUN / UPLOAD BUTTON ==========
       document.getElementById('btnRun').onclick = async () => {
+
+        // Desktop + USB connected → RUN user.py
+        if (stm32Port && stm32Writer) {
+          await runUserPyOnBoard();
+          return;
+        }
+
+        // Mobile WebView
+        if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
+          const code = Blockly.Python.workspaceToCode(workspace);
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({
+              type: "python_upload",
+              code: code,
+              entry_function: "main",
+            })
+          );
+          alert("Code sent to mobile app");
+          return;
+        }
+
+        alert("No board connected");
+      };
+      document.getElementById('btnSave').onclick = async () => {
         const code = Blockly.Python.workspaceToCode(workspace);
 
-        // 1) Desktop: if Web Serial is available and port is open → send ONLY "start()"
-        if (window.navigator && "serial" in window.navigator && stm32Port && stm32Writer) {
-          await sendCommandToStm32(code);
+        if (!code.trim()) {
+          alert("No code to save");
           return;
         }
 
-        // 2) Mobile app (React Native WebView) → send full python as before
-        if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
-          const payload = {
-            type: "python_upload",
-            code: code,
-            entry_function: "main",
-          };
-          window.ReactNativeWebView.postMessage(JSON.stringify(payload));
-          alert("Code sent to mobile app (no USB yet).");
+        // USB connected → write user.py
+        if (stm32Port && stm32Writer) {
+          await writeUserPyToBoard(code);
+          document.getElementById("responseDisplay").innerText =
+            "user.py saved on board";
           return;
         }
 
-        // 3) Fallback: normal browser (no Web Serial, no RN) → copy to clipboard
-        alert("Python copied to clipboard (no STM32 connection).");
-        navigator.clipboard?.writeText(code);
-      };
-
-
-      document.getElementById('btnSave').onclick = () => {
-        const xml = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(workspace));
+        // fallback → XML download
+        const xml = Blockly.Xml.domToPrettyText(
+          Blockly.Xml.workspaceToDom(workspace)
+        );
         const a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([xml], { type: 'text/xml' }));
         a.download = 'program.xml';
