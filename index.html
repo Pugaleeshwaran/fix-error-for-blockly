@@ -105,6 +105,10 @@
       background: #ffd46b
     }
 
+    .cwl {
+      background: #FCB6AE;
+    }
+
     .back {
       background: #bcd4ff
     }
@@ -563,7 +567,8 @@
         </button>
 
         <button class="btn-circle play" id="btnRun" title="Run ▶"><i class="fa-solid fa-copy"></i></button>
-
+        <button class="btn-circle cwl" id="btnboot" title="save board"><i
+            class="fa-solid fa-cloud-arrow-up"></i></button>
 
         <button class="btn-circle save" id="btnSave" title="Save"><i class="fa-solid fa-download"></i></button>
         <button class="btn-circle fwd" id="btnLoad" title="Load"><i class="fa-brands fa-openid"></i></button>
@@ -2916,7 +2921,7 @@
         // If more than two ports are selected, return the first two only
         return [`get_flame("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
-Blockly.Python['load_cell'] = function (block) {
+      Blockly.Python['load_cell'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
 
         // Split ports like "D3,H1"
@@ -3818,6 +3823,7 @@ ${code}
             console.error('Topic subscribe failed:', err);
           } else {
             console.log('Subscribed to topics:', topics);
+             handleBoardMessage("Wifi code sended sucessfully");
           }
         });
       });
@@ -4177,15 +4183,6 @@ ${code}
           alert("No code to save");
           return;
         }
-
-        // USB connected → write user.py
-        if (stm32Port && stm32Writer) {
-          await writeUserPyToBoard(code);
-          document.getElementById("responseDisplay").innerText =
-            "user.py saved on board";
-          return;
-        }
-
         // fallback → XML download
         const xml = Blockly.Xml.domToPrettyText(
           Blockly.Xml.workspaceToDom(workspace)
@@ -4196,6 +4193,19 @@ ${code}
         a.click();
         URL.revokeObjectURL(a.href);
       };
+
+
+      document.getElementById('btnboot').onclick = async () => {
+        const code = Blockly.Python.workspaceToCode(workspace);
+
+        // USB connected → write user.py
+        if (stm32Port && stm32Writer) {
+          await writeUserPyToBoard(code);
+          document.getElementById("responseDisplay").innerText =
+            "user.py saved on board";
+          return;
+        }
+      }
 
       document.getElementById('btnLoad').onclick = async () => {
         const [f] = await (window.showOpenFilePicker
