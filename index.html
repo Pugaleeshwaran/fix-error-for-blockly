@@ -666,6 +666,7 @@
       <block type="din_proximity"></block>
       <block type="din_ir"></block>
       <block type="din_flame"></block>
+      <block type="load_cell"></block>
     </category>
     <sep></sep>
     <category name="Logic" colour="#4C97FF">
@@ -1340,6 +1341,27 @@
         {
           type: "din_flame",
           message0: "FLAME %1 %2",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            }],
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style", "port_image_click"]
+        },
+        {
+          type: "load_cell",
+          message0: "Load Cell %1 %2",
           args0: [
             {
               type: "field_image",
@@ -2894,7 +2916,33 @@
         // If more than two ports are selected, return the first two only
         return [`get_flame("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
+Blockly.Python['load_cell'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
 
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`load_cell("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`load_cell("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`load_cell("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
 
       Blockly.Python['mini_motor'] = function (block) {
         const speed = block.getFieldValue('SPEED') || 0;
