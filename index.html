@@ -188,6 +188,9 @@
       font: 500 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
     }
 
+
+    /* ----------------pop up css--------------------- */
+
     /* Simple modal */
     .box {
       display: flex;
@@ -433,9 +436,9 @@
       background: #e8f4f7 !important;
     }
 
-    .blocklyMainBackground {
+    /* .blocklyMainBackground {
       fill: #ffffff !important;
-    }
+    } */
 
     .blocklyToolboxDiv {
       background: rgba(15, 23, 42, 0.9) !important;
@@ -497,7 +500,7 @@
 
     /* ===== LIGHT, ATTRACTIVE GRADIENTS ===== */
 
-    /* default gradient for ALL blocks */
+    /* gradient for ALL blocks */
 
     /* overrides for specific block types (different colors) */
 
@@ -505,7 +508,30 @@
       fill: url(#gradServo) !important;
       stroke-width: 1;
       stroke: #F266C1;
+
+
     }
+
+    /* CSS to animate the image on hover */
+    /* CSS to animate the image on hover */
+    .hover-animate {
+      transition: transform 0.2s ease-in-out !important;
+      display: inline-block !important;
+      /* Ensures the transform works as expected */
+    }
+
+    .hover-animate:hover {
+      transform: translateY(-5px) !important;
+      /* Move image upwards by 5px */
+    }
+
+
+
+    /* 
+    .block-servo>.blocklyPath:hover {
+      transition: all 500ms ease-in-out;
+      transform: translateY(-5px);
+    } */
 
     .led_style>.blocklyPath {
       fill: url(#gradled) !important;
@@ -543,6 +569,29 @@
       stroke: #2685BF;
       stroke-width: 1px;
     }
+
+    /* WiFi Modal Styling */
+    #wifiSettingsModal {
+      position: fixed;
+      inset: 0;
+      z-index: 1100;
+      width: 300px;
+      margin: 10% auto;
+      padding: 20px;
+      background: linear-gradient(to right, #eef2f3, #8e9eab);
+      /* Matches your theme */
+      border-radius: 12px;
+      height: fit-content;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      font-family: system-ui, sans-serif;
+    }
+
+    #wifiSettingsModal h3 {
+      text-align: center;
+      color: #333;
+      margin-top: 0;
+    }
   </style>
 </head>
 
@@ -558,6 +607,9 @@
         <!-- New: Connect Board button (for USB on desktop) -->
         <button class="btn-circle back" id="btnConnect" title="Connect Board">
           <i class="fa-solid fa-plug"></i>
+        </button>
+        <button class="btn-circle cwl" id="btnWifiConfig" title="WiFi Setup">
+          <i class="fa-solid fa-gear"></i>
         </button>
         <button class="btn-circle fwd" id="btnWifi" title="WiFi Boot">
           <i class="fa-solid fa-wifi"></i>
@@ -583,7 +635,7 @@
       <div class="pill" style="background:#fff2b9">Search</div>
       <div class="pill" style="background:#e4dcff">Brain</div>
     </aside>
-
+    <!-- ---------------this is the main block with python generator----------------------- -->
     <!-- Main -->
     <section class="main">
       <div class="workspace">
@@ -831,8 +883,28 @@
     </div>
   </div>
 
+  <div id="wifiSettingsModal" style="display:none;">
+    <div class="box">
+      <h3>WiFi Configuration</h3>
 
+      <div class="row" style="width: 100%; margin-bottom: 10px;">
+        <input type="text" id="wifiSSID" placeholder="Enter SSID Name"
+          style="width: 90%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+      </div>
+
+      <div class="row" style="width: 100%; margin-bottom: 15px;">
+        <input type="password" id="wifiPass" placeholder="Enter Password"
+          style="width: 90%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button onclick="saveWifiSettings()">Save & Connect</button>
+        <button onclick="closeWifiModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
   <script>
+
     let workspace = null;
 
     /* --- wait for Blockly --- */
@@ -845,6 +917,7 @@
       return !!(window.__blocklyLoaded && window.Blockly && Blockly.Python);
     }
 
+    // ---------------block creation is here-------------------
     /* --- define blocks (including modal-driven blocks) --- */
     function defineBlocks() {
       Blockly.defineBlocksWithJsonArray([
@@ -865,15 +938,29 @@
         },
         {
           type: "port_on",
-          message0: "DigitalOut ON %1 %2",
           args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/robo.png",
+              width: 35,
+              height: 35,
+              alt: "",
+              name: "IMG1",
+              class: "hover-animate"
+            },
+            {
+              type: "field_label",
+              name: "LABEL",
+              text: "Digi ON"
+            },
             {
               type: "field_image",
               src: "./assets/img/Chips_Chips_Show.png",
               width: 15,
               height: 15,
               alt: "",
-              name: "IMG"
+              name: "IMG",
+              class: "hover-animate"
             },
             {
               type: "field_label",
@@ -881,6 +968,7 @@
               text: ""
             }
           ],
+          message0: "%1 %2 %3 %4",
           colour: "#ffb56a",
           previousStatement: null,
           nextStatement: null,
@@ -2351,6 +2439,9 @@
         // }
       ]);
 
+
+      // -----------------this is popup block img  clickable function-----------------------
+
       Blockly.Extensions.register('port_on_img_click', function () {
         const imgField = this.getField('IMG');
         if (!imgField) return;
@@ -2383,6 +2474,7 @@
       });
 
       /* ===== BORDER / TYPE CLASS EXTENSIONS (for gradients) ===== */
+      // -----------------ADD GRADIENT COLOR FOR BLOCK HERE-------------------
 
       Blockly.Extensions.register('defult_style', function () {
         const block = this;
@@ -2452,6 +2544,8 @@
 
     }
 
+
+    //----------------Python CODE GENERATOR-------------------
     /* --- generators --- */
     function defineGenerators() {
       const py = Blockly.Python;
@@ -2556,11 +2650,18 @@
         return code;
       };
 
-      Blockly.Python['start'] = function (block) {
-        const body = Blockly.Python.statementToCode(block, 'DO') || 'pass/n';
-        const value = Blockly.Python.valueToCode(
-          block, 'VALUE', Blockly.Python.ORDER_NONE) || '';
-        return `def start(${value}):\n${body}\n`
+     Blockly.Python['start'] = function (block) {
+        const body =
+          Blockly.Python.statementToCode(block, 'DO') || '    pass\n';
+
+        const value =
+          Blockly.Python.valueToCode(
+            block,
+            'VALUE',
+            Blockly.Python.ORDER_NONE
+          );//|| 'None';
+
+        return `def start(${value}):\n${body} \n`;
       };
 
       Blockly.Python['do_servo'] = function (block) {
@@ -3215,7 +3316,10 @@
     }
 
 
+    // POPUP AND PORT Selection FUNCTIONALITY
     /* --- modal wiring --- */
+
+    // THIS IS FOR DIGITAL PINS
     let currentPortBlock = null;
     const ALL_PORT_NUMBERS = ["D3", "D4", "D5", "D6", "E3", "G4", "G5", "G6", "D7", "E0", "E1", "G3", "G0", "G1", "G2"];
 
@@ -3254,6 +3358,7 @@
       closePortModal();
     }
 
+    //--------------------THIS IS FOR MOTOR PINS--------------
     let currentMotorBlock = null;
 
     function openMotorSelectionModal(block) {
@@ -3287,7 +3392,7 @@
       closeModal();
     }
 
-    /* ==== SERVO MODAL ==== */
+    /* ==== THIS FOR  SERVO MODAL PINS==== */
     let currentServoBlock = null;
 
     function openServoSelectionModal(block) {
@@ -3324,7 +3429,7 @@
       currentServoBlock.setFieldValue(selectedValue, 'SERVO_PORT');
       closeServoModal();
     }
-    /* ==== LED PIN MODAL ==== */
+    /* ==== THIS IS FOR ANALOG PINS ==== */
     let currentLedBlock = null;
     const LED_PIN_NAMES = ['C0', 'C1', 'C2', 'F9', 'A3', 'F3', 'F4', 'F5', 'C4', 'C5', 'A1', 'A2', 'A4', 'F8', 'A6'];
 
@@ -3367,6 +3472,8 @@
       closeLedPinModal();
     }
 
+
+    // -------------MAKE FUNCTION FOR ADD addGradient COLOR FOR BLOCK--------------------
     // ---- Add multiple gradient defs into Blockly SVG (from Code A) ----
     function addGradientDefs() {
       const svg = document.querySelector('svg.blocklySvg');
@@ -3617,6 +3724,10 @@
 
 
 
+
+
+    // ADD USB BOOT FUNCTION IS HERE 
+
     // ===== Desktop: Web Serial USB to STM32 =====
     /* ============================================
        ==========  WEB SERIAL USB (FIXED) =========
@@ -3648,6 +3759,7 @@
           }
         }
 
+
         // Create ONE writer
         stm32Writer = stm32Port.writable.getWriter();
         listenForData();
@@ -3659,37 +3771,6 @@
       }
     }
 
-    /* ---- SEND PYTHON TO STM32 (RAW PASTE MODE — FIXED) ---- */
-    // async function sendCommandToStm32(code) {
-    //   if (!stm32Port || !stm32Writer) {
-    //     alert("Board not connected");
-    //     return;
-    //   }
-
-    //   // Auto-fix locked stream if necessary
-    //   if (stm32Port.writable.locked && !stm32Writer) {
-    //     console.warn("Stream locked — resetting writer");
-    //     stm32Writer = stm32Port.writable.getWriter();
-    //   }
-
-    // try {
-    //   console.log("Uploading via raw paste mode...");
-
-    //   // Enter paste mode (send the control character)
-    //   await stm32Writer.write(stm32Encoder.encode("\x05"));
-
-    //   // Send full code block
-    //   await stm32Writer.write(stm32Encoder.encode(code));
-
-    //   // Execute the code (using a control character for execution)
-    //   await stm32Writer.write(stm32Encoder.encode("\x04"));
-    //   await stm32Writer.write(stm32Encoder.encode("\r\n"));
-
-    //   console.log("Upload complete.");
-    // } catch (err) {
-    //   console.error("Serial upload error:", err);
-    // }
-    //}
 
     /* ==== WRITE user.py TO BOARD ==== */
     async function writeUserPyToBoard(code) {
@@ -3697,12 +3778,8 @@
         alert("Board not connected");
         return;
       }
-
-      const payload =
-        `@@START
-${code}
-@@END
-`;
+      //-----------CODE SEND IS HERE---------------
+      const payload = `@@START\n${code}\n@@END`;
 
       try {
         await stm32Writer.write(stm32Encoder.encode(payload));
@@ -3791,6 +3868,8 @@ ${code}
 
 
 
+
+    //--------------WIFI BOOTING IS HERE---------------
     // ------------------wifi-----------
     async function sendCodeToESP32_MQTT(code) {
       const mqttClient = mqtt.connect('wss://3921b8461cb747b593a333f2aced8435.s1.eu.hivemq.cloud:8884/mqtt', {
@@ -3815,7 +3894,7 @@ ${code}
       // Connect to the MQTT broker
       mqttClient.on('connect', function () {
         console.log('Connected to HiveMQ broker');
-        mqttClient.publish('esp32/boot', `@@START \n ${code} \n @@END`);
+        mqttClient.publish('esp32/boot', `@@START \n${code} \n @@END`);
 
         // Subscribe to the topics
         mqttClient.subscribe(topics, (err) => {
@@ -3823,7 +3902,7 @@ ${code}
             console.error('Topic subscribe failed:', err);
           } else {
             console.log('Subscribed to topics:', topics);
-             handleBoardMessage("Wifi code sended sucessfully");
+            handleBoardMessage("Wifi code sended sucessfully");
           }
         });
       });
@@ -3850,7 +3929,7 @@ ${code}
       mqttClient.on('close', function () {
         console.log('Connection to HiveMQ broker closed');
       });
-
+      //WIFI RECEIVE MESSAGE FUNCTIONS
       // Receive messages from the topic you subscribe to
       mqttClient.on('message', function (topic, message) {
         const data = message.toString();
@@ -3893,12 +3972,18 @@ ${code}
       });
     }
 
+
+
+    //-------------BLUETHOOTH BOOTING IS HERE ---------------
     // ===============================
     // BLE (Web Bluetooth) - BOOTING
     // ===============================
     const BLE_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
     const BLE_RX_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"; // WRITE (Web -> ESP32)
     const BLE_TX_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"; // NOTIFY (ESP32 -> Web)
+    // NEW: UUID specifically for WiFi (matches your backend)
+    const BLE_WIFI_UUID = "6e400004-b5a3-f393-e0a9-e50e24dcca9e";
+
 
     let bleDevice = null;
     let bleServer = null;
@@ -3973,7 +4058,7 @@ ${code}
         const CHUNK = 150; // safe chunk size
         for (let i = 0; i < code.length; i += CHUNK) {
           const part = code.slice(i, i + CHUNK);
-          await bleWriteText(`@@START \n ${part} \n @@END`);
+          await bleWriteText(`@@START\n${part}\n@@END`);
           await new Promise(r => setTimeout(r, 10)); // small delay
         }
 
@@ -3987,12 +4072,70 @@ ${code}
       }
     }
 
+    // --- WiFi Modal Logic ---
+
+    function openWifiModal() {
+      document.getElementById('wifiSettingsModal').style.display = 'block';
+    }
+
+    function closeWifiModal() {
+      document.getElementById('wifiSettingsModal').style.display = 'none';
+    }
+
+    // 1. Get values, 2. Close Modal, 3. Send via Bluetooth
+    async function saveWifiSettings() {
+      const ssid = document.getElementById('wifiSSID').value;
+      const pass = document.getElementById('wifiPass').value;
+
+      if (!ssid) {
+        alert("Please enter an SSID");
+        return;
+      }
+
+      closeWifiModal();
+
+      // Call the Bluetooth function
+      await sendWifiConfigOverBLE(ssid, pass);
+    }
+
+    // Function to send WiFi Credentials via BLE
+    async function sendWifiConfigOverBLE(ssid, password) {
+      if (!navigator.bluetooth) {
+        alert("Web Bluetooth not supported.");
+        return;
+      }
+
+      // Format: "ssid,password"
+      const payload = `${ssid},${password}`;
+      const encoder = new TextEncoder();
+
+      try {
+        // 1. Request Device
+        const device = await navigator.bluetooth.requestDevice({
+          filters: [{ services: [BLE_SERVICE_UUID] }]
+        });
+
+        // 2. Connect
+        const server = await device.gatt.connect();
+        const service = await server.getPrimaryService(BLE_SERVICE_UUID);
+
+        // 3. Get the WiFi Characteristic
+        const wifiChar = await service.getCharacteristic(BLE_WIFI_UUID);
+
+        // 4. Write Data
+        await wifiChar.writeValue(encoder.encode(payload));
+
+        alert("WiFi Credentials sent to board! ✅");
+
+      } catch (error) {
+        console.error("BLE WiFi Error:", error);
+        alert("Failed to send: " + error);
+      }
+    }
 
 
 
-
-
-
+    // ABOVE ALL FUNCTION AND BLOCK WORKSPACE DECLAREATION IS HERE
     /* --- app start --- */
     async function start() {
 
@@ -4048,46 +4191,16 @@ ${code}
 
 
 
-      // wifi logic
-      document.getElementById("btnWifi").onclick = async () => {
-        if (!workspace) {
-          alert("Blockly not ready yet");
-          return;
-        }
-
-        const code = Blockly.Python.workspaceToCode(workspace);
-
-        if (!code.trim()) {
-          alert("No code to send");
-          return;
-        }
-
-        // Send code via MQTT
-        await sendCodeToESP32_MQTT(code);
-      };
-
-      // Bluetooth boot button
-      document.getElementById("btnBluetooth").onclick = async () => {
-        if (!workspace) {
-          alert("Blockly not ready yet");
-          return;
-        }
-
-        const code = Blockly.Python.workspaceToCode(workspace);
-
-        if (!code.trim()) {
-          alert("No code to send");
-          return;
-        }
-
-        await sendCodeToBLEBoot(code);
-      };
 
 
+      //ABOVE FUNCTION CALL IS HERE
       // Apply design enhancements (gradients + selection fix)
       addGradientDefs();
       killBlueSelection();
       setupGradientAndShadowOnBlocks();
+
+
+      // HERE WE ADD  COSTOM SOUND 
       // Custom sound logic from Code A
       const audio = workspace.getAudioManager();
       audio.SOUNDS_ = {};
@@ -4150,6 +4263,51 @@ ${code}
 
       workspace.addChangeListener(updateCode);
       updateCode();
+
+
+      // HERE IS ADD ALL BTN LOGIC
+
+      // wifi logic
+      document.getElementById("btnWifi").onclick = async () => {
+        if (!workspace) {
+          alert("Blockly not ready yet");
+          return;
+        }
+
+        const code = Blockly.Python.workspaceToCode(workspace);
+
+        if (!code.trim()) {
+          alert("No code to send");
+          return;
+        }
+
+        // Send code via MQTT
+        await sendCodeToESP32_MQTT(code);
+      };
+
+      // Bluetooth boot button
+      document.getElementById("btnBluetooth").onclick = async () => {
+        if (!workspace) {
+          alert("Blockly not ready yet");
+          return;
+        }
+
+        const code = Blockly.Python.workspaceToCode(workspace);
+
+        if (!code.trim()) {
+          alert("No code to send");
+          return;
+        }
+
+        await sendCodeToBLEBoot(code);
+      };
+
+
+      // WiFi Config Button Listener
+      document.getElementById("btnWifiConfig").onclick = openWifiModal;
+
+
+
 
       // ========== RUN / UPLOAD BUTTON ==========
       document.getElementById('btnRun').onclick = async () => {
