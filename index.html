@@ -12,28 +12,36 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <!-- Load Blockly once -->
-  <script>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
+  <script>
     (function loadBlockly() {
       function add(src, next) {
         var s = document.createElement('script');
-        s.src = src; s.defer = false; s.async = false; s.onload = next || null;
+        s.src = src;
+        s.defer = false;
+        s.async = false;
+        s.onload = next || null;
+        s.onerror = function () { console.error("Failed to load:", src); };
         document.head.appendChild(s);
       }
+
+      // 1. Core
       add('https://unpkg.com/blockly@10.4.3/blockly_compressed.js', function () {
+        // 2. Blocks
         add('https://unpkg.com/blockly@10.4.3/blocks_compressed.js', function () {
+          // 3. Python
           add('https://unpkg.com/blockly@10.4.3/python_compressed.js', function () {
-            window.__blocklyLoaded = true;
+            // 4. English Language (MOVED INSIDE)
+            add('https://cdn.jsdelivr.net/npm/blockly@10.4.3/msg/en.js', function () {
+              console.log("Blockly loaded successfully!");
+              window.__blocklyLoaded = true;
+            });
           });
         });
       });
     })();
   </script>
-  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-  <script src="https://unpkg.com/blockly@10.4.3/msg/en.js"></script>
-
-
   <style>
     :root {
       --mint: #cfeff2;
@@ -2650,7 +2658,7 @@
         return code;
       };
 
-     Blockly.Python['start'] = function (block) {
+      Blockly.Python['start'] = function (block) {
         const body =
           Blockly.Python.statementToCode(block, 'DO') || '    pass\n';
 
