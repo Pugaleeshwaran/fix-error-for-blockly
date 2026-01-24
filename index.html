@@ -104,6 +104,10 @@
       background: #8ee38f
     }
 
+    .unlink {
+      background-color: #a3ffaf;
+    }
+
     .save {
       background: #f7a9bf
     }
@@ -171,7 +175,7 @@
       background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px),
         linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
       pointer-events: none;
-      width: 100%;  
+      width: 100%;
     }
 
     #blocklyDiv {
@@ -644,6 +648,10 @@
         <button class="btn-circle back" id="btnConnect" title="Connect Board">
           <i class="fa-solid fa-plug"></i>
         </button>
+        <button class="btn-circle unlink" id="btnDisconnect" title="Disconnect Board">
+          <i class="fas fa-unlink"></i>
+        </button>
+
         <button class="btn-circle cwl" id="btnWifiConfig" title="WiFi Setup">
           <i class="fa-solid fa-gear"></i>
         </button>
@@ -662,7 +670,8 @@
         <button class="btn-circle fwd" id="btnLoad" title="Load"><i class="fa-brands fa-openid"></i></button>
 
         <button class="btn-circle back" id="btnClear" title="Clear"><i class="fa-solid fa-broom"></i></button>
-        <button class="btn-circle output" id="showCode"><i class="fa-solid fa-code"></i></button>
+        <button onclick="toggleCodePanel()" class="btn-circle output" id="showCode"><i
+            class="fa-solid fa-code"></i></button>
       </div>
     </div>
 
@@ -679,7 +688,7 @@
       <div class="workspace">
         <div id="blocklyDiv"></div>
       </div>
-      <div class="code">
+      <div id="codePanel" class="code">
         <header style="display:flex;justify-content:space-between;align-items:center">
           <strong>Python (generated)</strong><small id="status">ready</small>
         </header>
@@ -752,6 +761,7 @@
       <block type="rc_sensor"></block>
     </category>
     <category name="Digitalin" colour="#FFB56A">
+      <block type="loop_end"></block>
       <block type="din_if_else"></block>
       <block type="din_sound"></block>
       <block type="din_tilt"></block>
@@ -2321,6 +2331,19 @@
           extensions: ["port_image_click", "servo_color"]
         },
         {
+          type: "loop_end",
+          message0: "End the Loop %1",
+          args0: [
+            {
+              type: "field_input",
+              name: "NAME",
+              text: ""
+            }],
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style", "port_image_click"]
+        },
+        {
           type: "buzzer",
           message0: "buzzer %1 %2 %3 %4 %5",
           args0: [
@@ -3327,6 +3350,9 @@
         const portList = ports.map(p => `"${p}"`).join(',');
         return `get_fan(${portList},${state})\n`;
       };
+
+      py['loop_end'] = b => `${b.getFieldValue('NAME') || ''}\n`;
+
       // Blockly.Python['rgb_display'] = function (block) {
       //   var red = block.getFieldValue('RED');
       //   var orange = block.getFieldValue('ORANGE');
@@ -3774,6 +3800,9 @@
     let stm32Port = null;
     let stm32Writer = null;
     let stm32Encoder = new TextEncoder();
+    let stm32Reader = null;
+    let stopUsbReader = false;
+
 
     /* ---- CONNECT TO STM32 ---- */
     async function connectStm32() {
@@ -3803,10 +3832,17 @@
         listenForData();
         alert("Connected to board!");
         console.log("STM32 connected.");
+        handleBoardMessage("STM32 connected");
+        setTimeout(function () {
+          handleBoardMessage("-");
+        }, 5000)
+
       } catch (e) {
         console.error("Failed to open port", e);
         alert("Connection failed");
       }
+
+
     }
 
 
@@ -3847,20 +3883,42 @@
     /* ---- OPTIONAL: DISCONNECT SAFELY ---- */
     async function disconnectStm32() {
       try {
+        stopUsbReader = true;
+
+        // Optional: tell STM32
+        if (stm32Writer) {
+          await stm32Writer.write(
+            stm32Encoder.encode("@@DISCONNECT@@\n")
+          );
+        }
+
+        if (stm32Reader) {
+          try { await stm32Reader.cancel(); } catch { }
+        }
+
         if (stm32Writer) {
           stm32Writer.releaseLock();
         }
+
         if (stm32Port) {
           await stm32Port.close();
         }
+
+        handleBoardMessage("USB disconnected");
+        setTimeout(function () {
+          handleBoardMessage("-");
+        }, 5000)
       } catch (e) {
         console.error("Disconnect error:", e);
       } finally {
         stm32Port = null;
         stm32Writer = null;
-        console.log("Disconnected");
+        stm32Reader = null;
+        stopUsbReader = false;
+        console.log("STM32 fully disconnected");
       }
     }
+
 
     function handleBoardMessage(line) {
       console.log("Board:", line);
@@ -3876,33 +3934,39 @@
       if (!stm32Port) return;
 
       const decoder = new TextDecoder();
-      const reader = stm32Port.readable.getReader();
+      stm32Reader = stm32Port.readable.getReader();
+      stopUsbReader = false;
 
       let buffer = "";
 
       try {
-        while (true) {
-          const { value, done } = await reader.read();
+        while (!stopUsbReader) {
+          const { value, done } = await stm32Reader.read();
           if (done) break;
 
           buffer += decoder.decode(value, { stream: true });
 
-          // Split by line
           let lines = buffer.split("\n");
-          buffer = lines.pop(); // keep incomplete line
+          buffer = lines.pop();
 
           for (let line of lines) {
             line = line.trim();
             if (!line) continue;
-
-            console.log("USB RX:", line);
             handleBoardMessage(line);
           }
         }
       } catch (e) {
-        console.error("USB read error:", e);
+        if (!stopUsbReader) {
+          console.error("USB read error:", e);
+        }
+      } finally {
+        try {
+          stm32Reader.releaseLock();
+        } catch { }
+        stm32Reader = null;
       }
     }
+
 
 
 
@@ -4196,6 +4260,14 @@
         connectStm32();
       };
 
+      document.getElementById("btnDisconnect").onclick = async () => {
+        if (!stm32Port) {
+          alert("No board connected");
+          return;
+        }
+        await disconnectStm32();
+        alert("board Disconnected Sucessfully")
+      };
 
 
 
@@ -4230,7 +4302,7 @@
         toolbox: document.getElementById('toolbox'),
         theme: Theme,
         renderer: 'zelos',
-        grid: { spacing: 30, length: 1, colour: '#b7b7b7', snap: true },
+        grid: { spacing: 30, length: 7, colour: '#b7b7b7', snap: true },
         trashcan: true,
         zoom: { controls: true, wheel: true, startScale: 0.9, maxScale: 2.0, minScale: 0.4 },
         move: { scrollbars: true, drag: true, wheel: true },
@@ -4449,7 +4521,7 @@
       };
 
 
-      //-----------show output code----------------
+      //   -----------show output code----------------
       const showCode = document.getElementById("showCode");
       const code = document.querySelector(".code");
       const show = document.querySelector(".show");
@@ -4459,7 +4531,27 @@
       showCode.addEventListener("click", function () {
         code.classList.toggle("show");
         main.classList.toggle("main1");
+        // 🔥 VERY IMPORTANT for Blockly
+        setTimeout(() => {
+          Blockly.svgResize(workspace);
+          workspace.scrollCenter();
+        }, 50);
       })
+
+
+      // function toggleCodePanel() {
+      //   const code = document.getElementById("codePanel");
+      //   const main = document.querySelector(".main");
+
+      //   const isHidden = code.classList.toggle("hidden");
+
+      //   if (isHidden) {
+      //     main.classList.add("expand");
+      //   } else {
+      //     main.classList.remove("expand");
+      //   }
+
+      // }
 
 
       const demo = `
