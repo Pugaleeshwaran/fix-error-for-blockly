@@ -746,7 +746,7 @@
       <block type="din_bo"></block>
       <block type="din_flame"></block>
       <block type="din_temp"></block>
-       <block type="water_sensor"></block>
+      <block type="water_sensor"></block>
     </category>
     <category name="Loop" colour="#FF6347">
       <block type="lp_while"></block>
@@ -754,6 +754,7 @@
       <block type="lp_start"></block>
       <block type="lp_repeat_count"></block>
       <block type="lp_label"></block>
+      <block type="any_input_block"></block>
     </category>
     <category name="motor" colour="#C0603E">
       <block type="mini_motor"></block>
@@ -2729,7 +2730,7 @@
           ],
           style: "control_blocks",
           output: "Boolean",
-          extensions: ["led_pin_image_click","servo_color"]
+          extensions: ["led_pin_image_click", "servo_color"]
         },
         {
           type: "din_temp",
@@ -2752,7 +2753,7 @@
           ],
           style: "control_blocks",
           output: "Boolean",
-          extensions: ["servo_color","led_pin_image_click"]
+          extensions: ["servo_color", "led_pin_image_click"]
         },
         {
           type: "water_sensor",
@@ -2774,6 +2775,21 @@
           style: "control_blocks",
           output: "Boolean",
           extensions: ["servo_color", "led_pin_image_click"]
+        },
+        {
+          "type": "any_input_block",
+          "message0": "%1",
+          "args0": [
+            {
+              "type": "field_input",
+              "name": "ANY",
+              "text": "1"
+            }
+          ],
+          "output": null,
+          "colour": 230,
+          "tooltip": "Accepts string, number, symbols",
+          "helpUrl": ""
         },
         // {
         //   type: "rgb_display",
@@ -4002,6 +4018,12 @@
 
         // If more than two ports are selected, return the first two only
         return [`water_sen("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+      Blockly.Python['any_input_block'] = function (block) {
+        var value = block.getFieldValue('ANY');
+
+        // Always return as string (prevents Python syntax errors)
+        return [value, Blockly.Python.ORDER_ATOMIC];
       };
 
     }
