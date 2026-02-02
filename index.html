@@ -1260,7 +1260,7 @@
         },
         {
           type: "ctl_delay",
-          message0: "delay %1 ms",
+          message0: "Sleep %1 ms",
           args0: [{
             type: "field_number",
             name: "MS",
@@ -3139,7 +3139,7 @@
 
       Blockly.Python['ctl_delay'] = function (block) {
         const ms = block.getFieldValue('MS') || 0;
-        return `robot.delay_ms(${ms})\n`;
+        return `time.sleep(${ms})\n`;
       };
 
       py['lp_while'] = b => {
