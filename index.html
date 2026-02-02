@@ -3165,7 +3165,7 @@
         const doStatements = Blockly.Python.statementToCode(block, 'DO') || '  pass\n';  // The 'do' part
         const elseStatements = Blockly.Python.statementToCode(block, 'ELSE') || '  pass\n';  // The 'else' part
 
-        return `if ${condition}:\n${doStatements}else: \n ${elseStatements} \n`;
+        return `if ${condition}:\n${doStatements}else:\n${elseStatements}\n`;
       };
 
 
