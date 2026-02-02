@@ -718,6 +718,7 @@
     <category name="Digitalout" colour="#81d4ed">
       <block type="do_onoff"></block>
       <block type="do_dc_motor"></block>
+      <block type="do_dc_motor1"></block>
       <block type="do_servo"></block>
       <block type="do_led"></block>
       <block type="bt_send"></block>
@@ -1170,6 +1171,38 @@
             },
           ],
           colour: "#81d4ed",
+          previousStatement: null,
+          nextStatement: null,
+          extensions: ["motor_image_click", "servo_color"]
+        },
+        {
+          type: "do_dc_motor1",
+          message0: "DC Motor2 %1 %2 %3",
+          args0: [
+            {
+              type: "field_image",
+              name: "IMG",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15
+            },
+            {
+              type: "field_label",
+              name: "MOTORS",
+              text: ""
+            },
+            {
+              type: "field_dropdown",
+              name: "STATE",
+              options: [
+                ["forward", "forward"],
+                ["backward", "backward"],
+                ["stop", "stop"],
+                ["turn left", "turn left"],
+                ["turn right", "turn right"]
+              ]
+            }
+          ],
           previousStatement: null,
           nextStatement: null,
           extensions: ["motor_image_click", "servo_color"]
@@ -3111,7 +3144,21 @@
 
         return code;
       };
+      Blockly.Python['do_dc_motor1'] = function (block) {
+        const angle = block.getFieldValue('STATE') || 0;
+        const ports = (block.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean);
+        // ALWAYS return a STRING
+        if (ports.length === 0) {
+          return '# Motor Meter: no port selected\n';
+        }
 
+        if (ports.length === 1) {
+          return `motor("${ports[0]}", "${angle}")\n`;
+        }
+
+        const portList = ports.map(p => `"${p}"`).join(', ');
+        return `motor(${portList}, "${angle}")\n`;
+      };
       Blockly.Python['start'] = function (block) {
         const body =
           Blockly.Python.statementToCode(block, 'DO') || '    pass\n';
