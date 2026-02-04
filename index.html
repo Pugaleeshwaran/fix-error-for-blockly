@@ -100,6 +100,14 @@
       cursor: pointer
     }
 
+    #playmode {
+      cursor: pointer;
+    }
+
+    #upload {
+      cursor: pointer;
+    }
+
     .play {
       background: #8ee38f
     }
@@ -677,9 +685,9 @@
 
     <!-- Left rail -->
     <aside class="rail">
-      <div class="pill" style="background:#d9f4fb">Motion</div>
-      <div class="pill" style="background:#ffd8d1">Ideas</div>
-      <div class="pill" style="background:#fff2b9">Search</div>
+      <button class="pill" id="playmode" style="background:#d9f4fb">play</button>
+      <button class="pill" id="upload" style="background:#ffd8d1">upload</button>
+      <button class="pill" id="stop" style="background:#ffd8d1">stop</button>
       <div class="pill" style="background:#e4dcff">Brain</div>
     </aside>
     <!-- ---------------this is the main block with python generator----------------------- -->
@@ -5130,6 +5138,65 @@
       workspace.addChangeListener(updateCode);
       updateCode();
 
+      document.getElementById("playmode").onclick = async () => {
+        if (!stm32Port || !stm32Writer) {
+          alert("Board not connected");
+          return;
+        }
+
+        // String to send (e.g., "play")
+        const message = "PLAY";
+
+        const payload = `${message}`;
+
+        try {
+          await stm32Writer.write(stm32Encoder.encode(payload));
+          console.log("String 'play' sent to STM32");
+        } catch (e) {
+          console.error("Error sending string:", e);
+          alert("Failed to send string to board");
+        }
+      };
+
+      // Upload button functionality (sending a string "upload")
+      document.getElementById("upload").onclick = async () => {
+        if (!stm32Port || !stm32Writer) {
+          alert("Board not connected");
+          return;
+        }
+
+        // String to send (e.g., "upload")
+        const message = "UPLOAD";
+
+        const payload = `${message}`;
+
+        try {
+          await stm32Writer.write(stm32Encoder.encode(payload));
+          console.log("String 'upload' sent to STM32");
+        } catch (e) {
+          console.error("Error sending string:", e);
+          alert("Failed to send string to board");
+        }
+      };
+      document.getElementById("stop").onclick = async () => {
+        if (!stm32Port || !stm32Writer) {
+          alert("Board not connected");
+          return;
+        }
+
+        // String to send (e.g., "play")
+        const message = "STOP";
+
+        const payload = `${message}`;
+
+        try {
+          await stm32Writer.write(stm32Encoder.encode(payload));
+          console.log("String 'stop' sent to STM32");
+        } catch (e) {
+          console.error("Error sending string:", e);
+          alert("Failed to send string to board");
+        }
+      };
 
       // HERE IS ADD ALL BTN LOGIC
 
