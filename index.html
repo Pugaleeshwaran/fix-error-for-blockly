@@ -5841,109 +5841,193 @@
 
 
 
+    // //-------------BLUETHOOTH BOOTING IS HERE ---------------
+    // // ===============================
+    // // BLE (Web Bluetooth) - BOOTING
+    // // ===============================
+    // const BLE_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
+    // const BLE_RX_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"; // WRITE (Web -> ESP32)
+    // const BLE_TX_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"; // NOTIFY (ESP32 -> Web)
+    // // NEW: UUID specifically for WiFi (matches your backend)
+    // const BLE_WIFI_UUID = "6e400004-b5a3-f393-e0a9-e50e24dcca9e";
+
+
+    // let bleDevice = null;
+    // let bleServer = null;
+    // let bleService = null;
+    // let bleRxChar = null;
+    // let bleTxChar = null;
+
+    // function bleIsConnected() {
+    //   return bleDevice && bleDevice.gatt && bleDevice.gatt.connected && bleRxChar;
+    // }
+
+    // async function connectBLEBoot() {
+    //   if (!navigator.bluetooth) {
+    //     alert("Web Bluetooth not supported. Use Chrome/Edge.");
+    //     return false;
+    //   }
+
+    //   try {
+    //     bleDevice = await navigator.bluetooth.requestDevice({
+    //       filters: [{ services: [BLE_SERVICE_UUID] }]
+    //     });
+
+    //     bleDevice.addEventListener("gattserverdisconnected", () => {
+    //       console.log("BLE disconnected");
+    //       handleBoardMessage("BLE disconnected");
+    //     });
+
+    //     bleServer = await bleDevice.gatt.connect();
+    //     bleService = await bleServer.getPrimaryService(BLE_SERVICE_UUID);
+
+    //     bleRxChar = await bleService.getCharacteristic(BLE_RX_UUID);
+    //     bleTxChar = await bleService.getCharacteristic(BLE_TX_UUID);
+
+    //     // optional: notifications from ESP32 -> web
+    //     await bleTxChar.startNotifications();
+    //     bleTxChar.addEventListener("characteristicvaluechanged", (event) => {
+    //       const decoder = new TextDecoder();
+    //       const msg = decoder.decode(event.target.value);
+    //       console.log("BLE notify:", msg);
+    //       handleBoardMessage("BLE: " + msg);
+    //     });
+
+    //     handleBoardMessage("BLE connected ✅");
+    //     return true;
+
+    //     setTimeout(function () {
+    //       handleBoardMessage("-");
+    //     }, 5000)
+    //   } catch (e) {
+    //     console.error("BLE connect error:", e);
+    //     alert("BLE connect failed: " + e);
+    //     return false;
+    //   }
+    // }
+
+    // async function bleWriteText(text) {
+    //   const enc = new TextEncoder();
+    //   await bleRxChar.writeValue(enc.encode(text));
+    // }
+
+    // // Send code in chunks (BLE limit)
+    // async function sendCodeToBLEBoot(code) {
+    //   if (!code || !code.trim()) {
+    //     alert("No code to send");
+    //     return;
+    //   }
+
+    //   if (!bleIsConnected()) {
+    //     const ok = await connectBLEBoot();
+    //     if (!ok) return;
+    //   }
+
+    //   try {
+    //     handleBoardMessage("BLE: sending...");
+
+    //     const CHUNK = 150; // safe chunk size
+    //     for (let i = 0; i < code.length; i += CHUNK) {
+    //       const part = code.slice(i, i + CHUNK);
+    //       await bleWriteText(`@@START\n${part}\n@@END`);
+    //       await new Promise(r => setTimeout(r, 10)); // small delay
+    //     }
+
+    //     // optional: end marker (device should detect this)
+    //     await bleWriteText("\n<<EOF>>\n");
+
+    //     handleBoardMessage("BLE: sent ✅");
+    //     setTimeout(function () {
+    //       handleBoardMessage("-");
+    //     }, 5000)
+    //   } catch (e) {
+    //     console.error("BLE send error:", e);
+    //     alert("BLE send failed: " + e);
+    //   }
+    // }
     //-------------BLUETHOOTH BOOTING IS HERE ---------------
     // ===============================
-    // BLE (Web Bluetooth) - BOOTING
+    // BLE (Web Bluetooth) – CLEAN OTA
     // ===============================
-    const BLE_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
-    const BLE_RX_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"; // WRITE (Web -> ESP32)
-    const BLE_TX_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"; // NOTIFY (ESP32 -> Web)
-    // NEW: UUID specifically for WiFi (matches your backend)
-    const BLE_WIFI_UUID = "6e400004-b5a3-f393-e0a9-e50e24dcca9e";
 
+    const BLE_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
+    const BLE_CONTROL_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
+    const BLE_DATA_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 
     let bleDevice = null;
     let bleServer = null;
     let bleService = null;
-    let bleRxChar = null;
-    let bleTxChar = null;
+    let bleControlChar = null;
+    let bleDataChar = null;
 
-    function bleIsConnected() {
-      return bleDevice && bleDevice.gatt && bleDevice.gatt.connected && bleRxChar;
+    function bleConnected() {
+      return bleDevice && bleDevice.gatt && bleDevice.gatt.connected;
     }
 
-    async function connectBLEBoot() {
-      if (!navigator.bluetooth) {
-        alert("Web Bluetooth not supported. Use Chrome/Edge.");
-        return false;
-      }
-
+    async function connectBLE() {
       try {
         bleDevice = await navigator.bluetooth.requestDevice({
-          filters: [{ services: [BLE_SERVICE_UUID] }]
+          acceptAllDevices: true,
+          optionalServices: [BLE_SERVICE_UUID]
         });
 
         bleDevice.addEventListener("gattserverdisconnected", () => {
-          console.log("BLE disconnected");
           handleBoardMessage("BLE disconnected");
         });
 
         bleServer = await bleDevice.gatt.connect();
         bleService = await bleServer.getPrimaryService(BLE_SERVICE_UUID);
 
-        bleRxChar = await bleService.getCharacteristic(BLE_RX_UUID);
-        bleTxChar = await bleService.getCharacteristic(BLE_TX_UUID);
-
-        // optional: notifications from ESP32 -> web
-        await bleTxChar.startNotifications();
-        bleTxChar.addEventListener("characteristicvaluechanged", (event) => {
-          const decoder = new TextDecoder();
-          const msg = decoder.decode(event.target.value);
-          console.log("BLE notify:", msg);
-          handleBoardMessage("BLE: " + msg);
-        });
+        bleControlChar = await bleService.getCharacteristic(BLE_CONTROL_UUID);
+        bleDataChar = await bleService.getCharacteristic(BLE_DATA_UUID);
 
         handleBoardMessage("BLE connected ✅");
         return true;
-
-        setTimeout(function () {
-          handleBoardMessage("-");
-        }, 5000)
       } catch (e) {
-        console.error("BLE connect error:", e);
         alert("BLE connect failed: " + e);
         return false;
       }
     }
 
-    async function bleWriteText(text) {
-      const enc = new TextEncoder();
-      await bleRxChar.writeValue(enc.encode(text));
-    }
-
-    // Send code in chunks (BLE limit)
     async function sendCodeToBLEBoot(code) {
       if (!code || !code.trim()) {
         alert("No code to send");
         return;
       }
 
-      if (!bleIsConnected()) {
-        const ok = await connectBLEBoot();
+      if (!bleConnected()) {
+        const ok = await connectBLE();
         if (!ok) return;
       }
 
-      try {
-        handleBoardMessage("BLE: sending...");
+      const encoder = new TextEncoder();
+      const rawData = encoder.encode(code);
+      const CHUNK_SIZE = 180;
 
-        const CHUNK = 150; // safe chunk size
-        for (let i = 0; i < code.length; i += CHUNK) {
-          const part = code.slice(i, i + CHUNK);
-          await bleWriteText(`@@START\n${part}\n@@END`);
-          await new Promise(r => setTimeout(r, 10)); // small delay
+      try {
+        handleBoardMessage("BLE: uploading...");
+
+        await bleControlChar.writeValue(encoder.encode("@@START"));
+
+        for (let i = 0; i < rawData.length; i += CHUNK_SIZE) {
+          const chunk = rawData.slice(i, i + CHUNK_SIZE);
+          await bleDataChar.writeValue(chunk);
+          await sleep(10);
         }
 
-        // optional: end marker (device should detect this)
-        await bleWriteText("\n<<EOF>>\n");
+        await bleControlChar.writeValue(encoder.encode("@@END"));
 
-        handleBoardMessage("BLE: sent ✅");
-        setTimeout(function () {
-          handleBoardMessage("-");
-        }, 5000)
+        handleBoardMessage(`BLE: upload done (${rawData.length} bytes)`);
+        setTimeout(() => handleBoardMessage("-"), 4000);
+
       } catch (e) {
-        console.error("BLE send error:", e);
-        alert("BLE send failed: " + e);
+        console.error("BLE upload error:", e);
+        alert("BLE upload failed");
       }
+    }
+
+    function sleep(ms) {
+      return new Promise(r => setTimeout(r, ms));
     }
 
     // --- WiFi Modal Logic ---
