@@ -1471,9 +1471,23 @@
       <block type="heart_beat"></block>
       <block type="soil_moisture"></block>
       <block type="dust"></block>
+      <block type="vibration-switch-sensor"></block>
+      <block type="Current-sensor"></block>
+      <block type="IR-Temp"></block>
+      <block type="temp2-sensor"></block>
       <block type="ecg"></block>
       <block type="ana_temp"></block>
       <block type="water-turbidity-sensor"></block>
+    </category>
+    <category name="I2c" colour="#A020F0">
+      <block type="magnetic_sensor"></block>
+      <block type="colour_sen"></block>
+      <block type="accelerometer_sensor"></block>
+      <block type="rtc_sensor"></block>
+      <block type="ir_sen"></block>
+      <block type="ambient-sen"></block>
+      <block type="din_ultra"></block>
+      <block type="voltage_sensor"></block>
     </category>
     <category name="Delay" colour="#92e08d">
       <block type="ctl_delay"></block>
@@ -3551,8 +3565,7 @@
           ],
           message0: "%1 %2 %3",
           colour: "#ffb56a",
-          previousStatement: null,
-          nextStatement: null,
+          output: "Boolean",
           extensions: ["port_image_click", "servo_color"]
         },
         {
@@ -3820,6 +3833,94 @@
           extensions: ["temp_style", "led_pin_image_click"]
         },
         {
+          type: "vibration-switch-sensor",
+          message0: "vibration %1 %2 ",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            },
+
+          ],
+          output: "Boolean",
+          extensions: ["led_pin_image_click", "temp_style"]
+        },
+        {
+          type: "Current-sensor",
+          message0: "Current %1 %2 ",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            },
+
+          ],
+          output: "Boolean",
+          extensions: ["led_pin_image_click", "temp_style"]
+        },
+        {
+          type: "IR-Temp",
+          message0: "IR Temp %1 %2 ",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            },
+
+          ],
+          output: "Boolean",
+          extensions: ["led_pin_image_click", "temp_style"]
+        },
+        {
+          type: "temp2-sensor",
+          message0: "temp01 %1 %2 ",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            },
+
+          ],
+          output: "Boolean",
+          extensions: ["led_pin_image_click", "temp_style"]
+        },
+        {
           type: "ecg",
           message0: "EGC %1 %2",
           args0: [
@@ -3860,6 +3961,112 @@
           style: "control_blocks",
           output: "Boolean",
           extensions: ["temp_style", "led_pin_image_click"]
+        },
+        {
+          type: "magnetic_sensor",
+          message0: "Megnetic sensor pin ",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "colour_sen",
+          message0: "Colour ",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "accelerometer_sensor",
+          message0: "Accelerometer sensor pin ",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "rtc_sensor",
+          message0: "Rtc sensor pin ",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "ir_sen",
+          message0: "IR Sensor %1 %2",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            }],
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style", "port_image_click"]
+        },
+        {
+          type: "ambient-sen",
+          message0: "Ambient sensor pin ",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "din_ultra",
+          message0: "Ultra Sonic sensor pin %1 %2",
+          args0: [{
+            type: "field_image",
+            src: "./assets/img/Chips_Chips_Show.png",
+            width: 15,
+            height: 15,
+            alt: "",
+            name: "IMG"
+          },
+          {
+            type: "field_label",
+            name: "PORTS",
+            text: ""
+          }
+
+          ],
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["led_pin_image_click", "temp_style"]
+        },
+        {
+          type: "voltage_sensor",
+          message0: "Voltage Sensor %1 %2",
+          args0: [
+
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",   // keep PORTS here
+              text: ""
+            }
+          ],
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["led_pin_image_click"]
         },
         {
           type: "rgb_display",
@@ -4344,16 +4551,16 @@
 
         // If one port is selected, return code for that port only
         if (pins.length === 1) {
-          return [`get_sound("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`sound("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If two ports are selected, use both for Trig and Echo
         if (pins.length === 2) {
-          return [`get_sound("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`sound("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If more than two ports are selected, return the first two only
-        return [`get_sound("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        return [`sound("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
       Blockly.Python['din_tilt'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
@@ -4371,16 +4578,16 @@
 
         // If one port is selected, return code for that port only
         if (pins.length === 1) {
-          return [`get_tilt("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`tilt("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If two ports are selected, use both for Trig and Echo
         if (pins.length === 2) {
-          return [`get_tilt("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`tilt("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If more than two ports are selected, return the first two only
-        return [`get_tilt("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        return [`tilt("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
       Blockly.Python['din_door'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
@@ -4425,16 +4632,16 @@
 
         // If one port is selected, return code for that port only
         if (pins.length === 1) {
-          return [`get_button("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`button("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If two ports are selected, use both for Trig and Echo
         if (pins.length === 2) {
-          return [`get_button("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`button("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If more than two ports are selected, return the first two only
-        return [`get_button("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        return [`button("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
       Blockly.Python['din_motion'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
@@ -4899,6 +5106,146 @@
         // If more than two ports are selected, return the first two only
         return [`soil_moisture("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
+
+      Blockly.Python['dust'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`dust("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`dust("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`dust("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      }
+      Blockly.Python['vibration-switch-sensor'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`vibration_sensor("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`vibration_sensor("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`vibration_sensor("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+      Blockly.Python['Current-sensor'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`current("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`current("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`current("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+
+
+      Blockly.Python['IR-Temp'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`IrTemp("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`IrTemp("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`IrTemp("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+
+      Blockly.Python['temp2-sensor'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`tempanalog("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`tempanalog("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`tempanalog("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+
       Blockly.Python['ecg'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
 
@@ -5228,6 +5575,96 @@
       Blockly.Python['din_temp'] = function (block) {
         const port = block.getFieldValue('PORTS');
         return [`temp("${port}")`, Blockly.Python.ORDER_NONE];
+      };
+
+
+      py['magnetic_sensor'] = b => [`magnetic()`, py.ORDER_ATOMIC];
+      py['colour_sen'] = b => [`colour()`, py.ORDER_ATOMIC];
+      py['accelerometer_sensor'] = b => [`accelerometer()`, py.ORDER_ATOMIC];
+      py['rtc_sensor'] = b => [`rtc()`, py.ORDER_ATOMIC];
+
+      Blockly.Python['ir_sen'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`IR("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`IR("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`IR("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+      py['ambient-sen'] = b => [`ambient()`, py.ORDER_ATOMIC];
+
+      Blockly.Python['din_ultra'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`ultrasonic("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`ultrasonic("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`ultrasonic("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+      Blockly.Python['voltage_sensor'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`voltage("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`voltage("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`voltage("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
       Blockly.Python['water_sensor'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
