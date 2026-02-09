@@ -455,7 +455,7 @@
     }
 
     #motorSelectionModal {
-    width: 300px;
+      width: 300px;
       margin: 10% auto;
       padding: 20px;
       background: linear-gradient(to right, #DDDDDD, #ffffff);
@@ -1473,6 +1473,7 @@
       <block type="dust"></block>
       <block type="ecg"></block>
       <block type="ana_temp"></block>
+      <block type="water-turbidity-sensor"></block>
     </category>
     <category name="Delay" colour="#92e08d">
       <block type="ctl_delay"></block>
@@ -3113,6 +3114,28 @@
           previousStatement: null,
           nextStatement: null,
           extensions: ["port_image_click", "ultra_style"]
+        },
+        {
+          type: "water-turbidity-sensor",
+          message0: "turbidity %1 %2 ",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            },
+
+          ],
+          output: "Boolean",
+          extensions: ["led_pin_image_click", "servo_color"]
         },
         {
           type: "steper",
@@ -4784,11 +4807,11 @@
         }
 
         if (ports.length === 1) {
-          return `mini_fan("${ports[0]}",${state})\n`;
+          return `mini_fan("${ports[0]}","${state}")\n`;
         }
 
         const portList = ports.map(p => `"${p}"`).join(',');
-        return `mini_fan(${portList},${state})\n`;
+        return `mini_fan(${portList},"${state}")\n`;
       };
 
       py['loop_end'] = b => `${b.getFieldValue('NAME') || ''}\n`;
@@ -5161,6 +5184,33 @@
 
         // If more than two ports are selected, return the first two only
         return [`tds_sensor("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+      Blockly.Python['water-turbidity-sensor'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`waterturbidity("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`waterturbidity("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`waterturbidity("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
       Blockly.Python['LCD_print'] = function (block) {
         const txt = Blockly.Python.valueToCode(block, 'TEXT', Blockly.Python.ORDER_NONE) || "";
