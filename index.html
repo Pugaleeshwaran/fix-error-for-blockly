@@ -49,9 +49,11 @@
       --grid: #cfe7ec;
       --shadow: 0 10px 24px rgba(23, 46, 56, .12)
     }
-*{
-  box-sizing: border-box;
-}
+
+    * {
+      box-sizing: border-box;
+    }
+
     html,
     body {
       height: 100%;
@@ -63,7 +65,7 @@
     .app {
       display: grid;
       grid-template-rows: 72px 1fr;
-      grid-template-columns: 220px 1fr;
+      grid-template-columns: 160px 1fr;
       gap: 14px;
       padding: 14px;
       height: 100dvh;
@@ -269,16 +271,15 @@
 
     .main {
       display: grid;
-      grid-template-columns: 70% 30%;
+      grid-template-columns: 75% 23%;
       overflow: hidden;
       gap: 14px;
-      padding: 0 20px;
+      padding: 0px;
       height: 100%;
     }
 
     .workspace {
       position: relative;
-      min-height: 300px;
       border-radius: 18px;
       overflow: hidden;
       box-shadow: var(--shadow);
@@ -309,7 +310,8 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      min-height: 0
+      min-height: 0;
+      height: 100%
     }
 
     .code pre {
@@ -328,6 +330,7 @@
       padding: 10px;
       background: #dad7d7;
       border-radius: 8px;
+      display: none;
     }
 
     /* ----------------pop up css--------------------- */
@@ -1043,6 +1046,8 @@
     @media screen and (max-width: 1200px) {
       .app {
         grid-template-columns: 1fr;
+        height: 100dvh;
+        grid-template-rows: 72px 1fr;
       }
 
       .rail {
@@ -1050,9 +1055,14 @@
       }
 
       .main {
-        grid-template-columns: 70% 30%;
+        grid-template-columns: 75% 23%;
         overflow: hidden;
         font-size: 12px;
+        height: 100%;
+      }
+
+      .wifi-return {
+        display: none;
       }
 
     }
@@ -1065,7 +1075,7 @@
       grid-template-columns: 1fr;
       overflow: hidden;
       gap: 14px;
-      padding: 0 20px;
+      padding: 0px;
       height: 100%;
     }
 
@@ -1398,15 +1408,15 @@
         </button>
 
         <!-- <button class="btn-circle play" id="btnRun" title="Run ▶"><i class="fa-solid fa-copy"></i></button> -->
-        
-        <button class="btn-circle cwl" id="btnboot" title="save board"><i class="fa-solid fa-cloud-arrow-up"></i></button>
+
+        <button class="btn-circle cwl" id="btnboot" title="save board"><i
+            class="fa-solid fa-cloud-arrow-up"></i></button>
 
         <button class="btn-circle save" id="btnSave" title="Save"><i class="fa-solid fa-download"></i></button>
         <button class="btn-circle fwd" id="btnLoad" title="Load"><i class="fa-brands fa-openid"></i></button>
 
         <button class="btn-circle back" id="btnClear" title="Clear"><i class="fa-solid fa-broom"></i></button>
-        <button class="btn-circle output" id="showCode" title="expand"><i
-            class="fa-solid fa-code"></i></button>
+        <button class="btn-circle output" id="showCode" title="expand"><i class="fa-solid fa-code"></i></button>
       </div>
     </div>
 
@@ -1560,6 +1570,7 @@
       <block type="logic_boolean"></block>
       <block type="logical_comparison"></block>
       <block type="any_input_block"></block>
+      <block type="custom_if_then"></block>
     </category>
     <category name="Maths" colour="#9ACD32">
       <block type="math_number">
@@ -2494,11 +2505,11 @@
               text: ""
             },
             {
-              type: "input_value",
+              type: "field_number",
               name: "VAL"
             },
             {
-              type: "input_value",
+              type: "field_number",
               name: "VAL2"
             }
           ],
@@ -3729,6 +3740,27 @@
           helpUrl: ""
         },
         {
+          type: "custom_if_then",
+          message0: "if %1 then %2",
+          args0: [
+            {
+              type: "input_value",
+              name: "CONDITION",
+              check: "Boolean"
+            },
+            {
+              type: "input_statement",
+              name: "DO"
+            }
+          ],
+          previousStatement: null,
+          nextStatement: null,
+          colour: 10,
+          tooltip: "If condition is true, run the blocks inside",
+          helpUrl: "",
+          extensions: ["led_style"]
+        },
+        {
           type: "tep_ana",
           message0: "Temputure ana Sensor %1 %2",
           args0: [
@@ -4422,11 +4454,9 @@
       Blockly.Python['do_led_param'] = function (block) {
         const pinsTxt = block.getFieldValue('PORTS') || '';   // 🔴 PINS → PORTS
 
-        const valueCode1 =
-          Blockly.Python.valueToCode(block, 'VAL', Blockly.Python.ORDER_NONE) || '0';
+        const valueCode1 = block.getFieldValue('VAL') || 0;
 
-        const valueCode2 =
-          Blockly.Python.valueToCode(block, 'VAL2', Blockly.Python.ORDER_NONE) || '0';
+        const valueCode2 = block.getFieldValue('VAL2') || 0;
 
         const pins = pinsTxt.split(',').map(s => s.trim()).filter(Boolean);
 
@@ -4437,7 +4467,7 @@
         let code = '';
         pins.forEach(pin => {
           // using 'D3' style names:
-          code += `led_blink('${pin}', ${valueCode1}, ${valueCode2})\n`;
+          code += `led_blink('${pin}',${valueCode1},${valueCode2})\n`;
         });
 
         return code;
@@ -5674,6 +5704,30 @@
 
         // Always return as string (prevents Python syntax errors)
         return [value, Blockly.Python.ORDER_ATOMIC];
+      };
+
+      Blockly.Python['custom_if_then'] = function (block) {
+
+        // Get condition (Boolean input)
+        var condition = Blockly.Python.valueToCode(
+          block,
+          'CONDITION',
+          Blockly.Python.ORDER_NONE
+        ) || 'False';
+
+        // Get statements inside IF
+        var statements = Blockly.Python.statementToCode(block, 'DO');
+
+        // Generate Python code
+        var code = 'if ' + condition + ':\n';
+
+        if (statements) {
+          code += statements;
+        } else {
+          code += '    pass\n';
+        }
+
+        return code;
       };
 
       Blockly.Python['rgb_led_display'] = function (block) {
