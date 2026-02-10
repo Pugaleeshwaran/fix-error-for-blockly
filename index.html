@@ -49,7 +49,9 @@
       --grid: #cfe7ec;
       --shadow: 0 10px 24px rgba(23, 46, 56, .12)
     }
-
+*{
+  box-sizing: border-box;
+}
     html,
     body {
       height: 100%;
@@ -63,7 +65,8 @@
       grid-template-rows: 72px 1fr;
       grid-template-columns: 220px 1fr;
       gap: 14px;
-      padding: 14px
+      padding: 14px;
+      height: 100dvh;
     }
 
     .brand img {
@@ -136,7 +139,8 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      align-items: center
+      align-items: center;
+      justify-content: center;
     }
 
     .pill {
@@ -269,7 +273,7 @@
       overflow: hidden;
       gap: 14px;
       padding: 0 20px;
-      height: 100dvh;
+      height: 100%;
     }
 
     .workspace {
@@ -1062,7 +1066,7 @@
       overflow: hidden;
       gap: 14px;
       padding: 0 20px;
-      height: 100dvh;
+      height: 100%;
     }
 
     .checkbox-wrapper-8 .tgl {
@@ -1378,30 +1382,30 @@
         <button class="btn-circle back" id="btnConnect" title="Connect Board">
           <i class="fa-solid fa-plug"></i>
         </button>
-        <button class="btn-circle unlink" id="btnDisconnect" title="Disconnect Board">
+        <!-- <button class="btn-circle unlink" id="btnDisconnect" title="Disconnect Board">
           <i class="fas fa-unlink"></i>
-        </button>
+        </button> -->
 
-        <button class="btn-circle cwl" id="btnWifiConfig" title="WiFi Setup">
+        <!-- <button class="btn-circle cwl" id="btnWifiConfig" title="WiFi Setup">
           <i class="fa-solid fa-gear"></i>
-        </button>
-        <button class="btn-circle fwd" id="btnWifi" title="WiFi Boot">
+        </button> -->
+        <!-- <button class="btn-circle fwd" id="btnWifi" title="WiFi Boot">
           <i class="fa-solid fa-wifi"></i>
-        </button>
+        </button> -->
 
         <button class="btn-circle back" id="btnBluetooth" title="Bluetooth Boot">
           <i class="fa-brands fa-bluetooth-b"></i>
         </button>
 
-        <button class="btn-circle play" id="btnRun" title="Run ▶"><i class="fa-solid fa-copy"></i></button>
-        <button class="btn-circle cwl" id="btnboot" title="save board"><i
-            class="fa-solid fa-cloud-arrow-up"></i></button>
+        <!-- <button class="btn-circle play" id="btnRun" title="Run ▶"><i class="fa-solid fa-copy"></i></button> -->
+        
+        <button class="btn-circle cwl" id="btnboot" title="save board"><i class="fa-solid fa-cloud-arrow-up"></i></button>
 
         <button class="btn-circle save" id="btnSave" title="Save"><i class="fa-solid fa-download"></i></button>
         <button class="btn-circle fwd" id="btnLoad" title="Load"><i class="fa-brands fa-openid"></i></button>
 
         <button class="btn-circle back" id="btnClear" title="Clear"><i class="fa-solid fa-broom"></i></button>
-        <button onclick="toggleCodePanel()" class="btn-circle output" id="showCode"><i
+        <button class="btn-circle output" id="showCode" title="expand"><i
             class="fa-solid fa-code"></i></button>
       </div>
     </div>
@@ -1445,26 +1449,29 @@
 
   <!-- Toolbox -->
   <xml id="toolbox" style="display:none">
-    <category name="Digital in" colour="#FFD46B">
-      <block type="port_on"></block>
-      <block type="port_off"></block>
-      <block type="sen_ultrasonic"></block>
-      <block type="sen_temp"></block>
-    </category>
-    <category name="Digitalout" colour="#81d4ed">
-      <block type="do_onoff"></block>
-      <block type="do_dc_motor"></block>
-      <block type="do_dc_motor2"></block>
-      <block type="do_servo"></block>
-      <block type="do_led"></block>
-      <block type="bt_send"></block>
+    <category name="Digital" colour="#FFD46B">
+
+      <block type="din_sound"></block>
+      <block type="din_tilt"></block>
+      <block type="din_door"></block>
+      <block type="din_button"></block>
+      <block type="din_motion"></block>
+      <block type="din_proximity"></block>
+      <block type="din_ir"></block>
+      <block type="din_flame"></block>
+      <block type="load_cell"></block>
       <block type="steper"></block>
       <block type="waterpump"></block>
       <block type="solinoid"></block>
       <block type="animo"></block>
       <block type="relay"></block>
       <block type="buzzer"></block>
-
+      <block type="minifan"></block>
+      <block type="rgb_component"></block>
+      <block type="buzzer_component"></block>
+      <block type="joystick_move"></block>
+      <block type="ir_sen"></block>
+      <block type="relay"></block>
     </category>
     <category name="Analog" colour="#781692">
       <block type="tep_ana"></block>
@@ -1478,85 +1485,81 @@
       <block type="ecg"></block>
       <block type="ana_temp"></block>
       <block type="water-turbidity-sensor"></block>
+
+      <block type="shock_sensor"></block>
+      <block type="flex-sensor"></block>
+      <block type="Air_quality_sensor"></block>
+      <block type="flexi_force_sensor"></block>
+      <block type="TDS_Water_sensor"></block>
+      <block type="din_flame"></block>
+      <block type="din_temp"></block>
+      <block type="water_sensor"></block>
+      <block type="din_ultra"></block>
+      <block type="voltage_sensor"></block>
     </category>
     <category name="I2c" colour="#A020F0">
       <block type="magnetic_sensor"></block>
       <block type="colour_sen"></block>
       <block type="accelerometer_sensor"></block>
       <block type="rtc_sensor"></block>
-      <block type="ir_sen"></block>
+
       <block type="ambient-sen"></block>
-      <block type="din_ultra"></block>
-      <block type="voltage_sensor"></block>
     </category>
-    <category name="Delay" colour="#92e08d">
-      <block type="ctl_delay"></block>
+    <category name="PWM" colour="#781692">
+      <block type="do_dc_motor"></block>
+      <block type="do_servo"></block>
+      <block type="do_dc_motor2"></block>
+    </category>
+    <category name="LEDs" colour="#FFB56A">
       <block type="do_led_param"></block>
-      <block type="rgb_component"></block>
-      <block type="shock_sensor"></block>
-      <block type="flex-sensor"></block>
-      <block type="buzzer_component"></block>
-      <block type="relay"></block>
-      <block type="joystick_move"></block>
-      <block type="Air_quality_sensor"></block>
-      <block type="minifan"></block>
-      <block type="flexi_force_sensor"></block>
-      <block type="TDS_Water_sensor"></block>
+      <block type="do_led"></block>
+      <block type="red_led"></block>
+      <block type="yellow_led"></block>
+      <block type="green_led"></block>
+      <block type="rgb_display"></block>
+      <block type="rgb_led_display"></block>
       <block type="LCD_print"></block>
-      <block type="din_bo"></block>
-      <block type="din_flame"></block>
-      <block type="din_temp"></block>
-      <block type="water_sensor"></block>
     </category>
+    <category name="Tx-Rx" colour="#C0603E">
+      <block type="mini_motor"></block>
+      <block type="remote_motor"></block>
+      <block type="water_motor"></block>
+      <block type="tank_motor"></block>
+      <block type="port_on"></block>
+      <block type="port_off"></block>
+      <block type="sen_ultrasonic"></block>
+      <block type="sen_temp"></block>
+    </category>
+
+    <category name="SPI" colour="#2EB061">
+      <block type="sensor"></block>
+      <block type="tem_sensor"></block>
+      <block type="xray_sensor"></block>
+      <block type="rc_sensor"></block>
+      <block type="do_onoff"></block>
+      <block type="bt_send"></block>
+      <block type="loop_end"></block>
+    </category>
+
     <category name="Loop" colour="#FF6347">
       <block type="lp_while"></block>
       <block type="lp_break"></block>
       <block type="lp_start"></block>
       <block type="lp_repeat_count"></block>
       <block type="lp_label"></block>
-      <block type="any_input_block"></block>
+
     </category>
-    <category name="motor" colour="#C0603E">
-      <block type="mini_motor"></block>
-      <block type="remote_motor"></block>
-      <block type="water_motor"></block>
-      <block type="tank_motor"></block>
-    </category>
-    <category name="LEDs" colour="#FFB56A">
-      <block type="red_led"></block>
-      <block type="yellow_led"></block>
-      <block type="green_led"></block>
-      <block type="rgb_display"></block>
-      <block type="rgb_led_display"></block>
-    </category>
-    <category name="sensor" colour="#2EB061">
-      <block type="sensor"></block>
-      <block type="tem_sensor"></block>
-      <block type="xray_sensor"></block>
-      <block type="rc_sensor"></block>
-    </category>
-    <category name="Digitalin" colour="#FFB56A">
-      <block type="loop_end"></block>
-      <block type="din_if_else"></block>
-      <block type="din_sound"></block>
-      <block type="din_tilt"></block>
-      <block type="din_door"></block>
-      <block type="din_button"></block>
-      <block type="din_motion"></block>
-      <block type="din_proximity"></block>
-      <block type="din_ir"></block>
-      <block type="din_flame"></block>
-      <block type="load_cell"></block>
+
+    <category name="Delay" colour="#FFB56A">
+      <block type="ctl_delay"></block>
     </category>
     <sep></sep>
     <category name="Logic" colour="#4C97FF">
+      <block type="din_if_else"></block>
       <block type="logic_operation"></block>
       <block type="logic_boolean"></block>
       <block type="logical_comparison"></block>
-
-      <block type="math_number">
-        <field name="NUM">1</field>
-      </block>
+      <block type="any_input_block"></block>
     </category>
     <category name="Maths" colour="#9ACD32">
       <block type="math_number">
@@ -3644,29 +3647,6 @@
           extensions: ["servo_color"]
         },
         {
-          type: "din_bo",
-          message0: "button pin %1 %2",
-          args0: [
-
-            {
-              type: "field_image",
-              src: "./assets/img/Chips_Chips_Show.png",
-              width: 15,
-              height: 15,
-              alt: "",
-              name: "IMG"
-            },
-            {
-              type: "field_label",
-              name: "PORTS",   // keep PORTS here
-              text: ""
-            }
-          ],
-          style: "control_blocks",
-          output: "Boolean",
-          extensions: ["port_on_img_click", "servo_color"]
-        },
-        {
           type: "din_flame",
           message0: "flame sensor pin %1 %2",
           args0: [
@@ -4066,7 +4046,7 @@
           ],
           style: "control_blocks",
           output: "Boolean",
-          extensions: ["led_pin_image_click"]
+          extensions: ["led_pin_image_click", "temp_style"]
         },
         {
           type: "rgb_display",
@@ -5563,10 +5543,6 @@
         const txt = Blockly.Python.valueToCode(block, 'TEXT', Blockly.Python.ORDER_NONE) || "";
         // Example: send text to LCD
         return `lcd(${txt})\n`;
-      };
-      Blockly.Python['din_bo'] = function (block) {
-        const port = block.getFieldValue('PORTS');
-        return [`button("${port}")`, Blockly.Python.ORDER_NONE];
       };
       Blockly.Python['din_flame'] = function (block) {
         const port = block.getFieldValue('PORTS');
@@ -7066,14 +7042,14 @@
         connectStm32();
       };
 
-      document.getElementById("btnDisconnect").onclick = async () => {
-        if (!stm32Port) {
-          alert("No board connected");
-          return;
-        }
-        await disconnectStm32();
-        alert("board Disconnected Sucessfully")
-      };
+      // document.getElementById("btnDisconnect").onclick = async () => {
+      //   if (!stm32Port) {
+      //     alert("No board connected");
+      //     return;
+      //   }
+      //   await disconnectStm32();
+      //   alert("board Disconnected Sucessfully")
+      // };
 
 
 
@@ -7260,22 +7236,22 @@
       // HERE IS ADD ALL BTN LOGIC
 
       // wifi logic
-      document.getElementById("btnWifi").onclick = async () => {
-        if (!workspace) {
-          alert("Blockly not ready yet");
-          return;
-        }
+      // document.getElementById("btnWifi").onclick = async () => {
+      //   if (!workspace) {
+      //     alert("Blockly not ready yet");
+      //     return;
+      //   }
 
-        const code = Blockly.Python.workspaceToCode(workspace);
+      //   const code = Blockly.Python.workspaceToCode(workspace);
 
-        if (!code.trim()) {
-          alert("No code to send");
-          return;
-        }
+      //   if (!code.trim()) {
+      //     alert("No code to send");
+      //     return;
+      //   }
 
-        // Send code via MQTT
-        await sendCodeToESP32_MQTT(code);
-      };
+      //   // Send code via MQTT
+      //   await sendCodeToESP32_MQTT(code);
+      // };
 
       // Bluetooth boot button
       // Bluetooth button now ONLY connects/disconnects the board
@@ -7295,36 +7271,36 @@
       };
 
       // WiFi Config Button Listener
-      document.getElementById("btnWifiConfig").onclick = openWifiModal;
+      // document.getElementById("btnWifiConfig").onclick = openWifiModal;
 
 
 
 
       // ========== RUN / UPLOAD BUTTON ==========
-      document.getElementById('btnRun').onclick = async () => {
+      // document.getElementById('btnRun').onclick = async () => {
 
-        // Desktop + USB connected → RUN user.py
-        if (stm32Port && stm32Writer) {
-          await runUserPyOnBoard();
-          return;
-        }
+      //   // Desktop + USB connected → RUN user.py
+      //   if (stm32Port && stm32Writer) {
+      //     await runUserPyOnBoard();
+      //     return;
+      //   }
 
-        // Mobile WebView
-        if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
-          const code = Blockly.Python.workspaceToCode(workspace);
-          window.ReactNativeWebView.postMessage(
-            JSON.stringify({
-              type: "python_upload",
-              code: code,
-              entry_function: "main",
-            })
-          );
-          alert("Code sent to mobile app");
-          return;
-        }
+      //   // Mobile WebView
+      //   if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
+      //     const code = Blockly.Python.workspaceToCode(workspace);
+      //     window.ReactNativeWebView.postMessage(
+      //       JSON.stringify({
+      //         type: "python_upload",
+      //         code: code,
+      //         entry_function: "main",
+      //       })
+      //     );
+      //     alert("Code sent to mobile app");
+      //     return;
+      //   }
 
-        alert("No board connected");
-      };
+      //   alert("No board connected");
+      // };
       document.getElementById('btnSave').onclick = async () => {
         const code = Blockly.Python.workspaceToCode(workspace);
 
@@ -7408,20 +7384,6 @@
         }, 50);
       })
 
-
-      // function toggleCodePanel() {
-      //   const code = document.getElementById("codePanel");
-      //   const main = document.querySelector(".main");
-
-      //   const isHidden = code.classList.toggle("hidden");
-
-      //   if (isHidden) {
-      //     main.classList.add("expand");
-      //   } else {
-      //     main.classList.remove("expand");
-      //   }
-
-      // }
 
 
       const demo = `
