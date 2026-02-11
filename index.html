@@ -926,7 +926,16 @@
 
     .blocklyScrollbarHandle {
       fill: rgba(148, 163, 184, 0.9) !important;
+
     }
+/* 
+    .blocklyScrollbarVertical {
+      width: 10px;
+    }
+
+    .blocklyScrollbarHorizontal {
+      height: 10px;
+    } */
 
     .blocklyScrollbarBackground {
       fill: transparent !important;
@@ -1064,6 +1073,19 @@
       .wifi-return {
         display: none;
       }
+
+      .blocklyScrollbarBackground {
+        width: 5px;
+      }
+
+      .blocklyScrollbarVertical {
+        width: 15px;
+      }
+
+      .blocklyScrollbarHorizontal {
+        height: 15px;
+      }
+
 
     }
 
@@ -1482,6 +1504,7 @@
       <block type="joystick_move"></block>
       <block type="ir_sen"></block>
       <block type="relay"></block>
+      
     </category>
     <category name="Analog" colour="#781692">
       <block type="tep_ana"></block>
@@ -1525,6 +1548,7 @@
       <block type="do_led"></block>
       <block type="red_led"></block>
       <block type="yellow_led"></block>
+      <block type="light_freq"></block>
       <block type="green_led"></block>
       <block type="rgb_display"></block>
       <block type="rgb_led_display"></block>
@@ -2118,6 +2142,7 @@
               ]
             }
           ],
+          colour: "#FF69B4",
           previousStatement: null,
           nextStatement: null,
           extensions: ["motor_image_click2", "servo_color"]
@@ -2384,6 +2409,27 @@
         {
           type: "din_motion",
           message0: "MOTION SENSOR %1 %2",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            }],
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style", "port_image_click"]
+        },
+        {
+          type: "light_freq",
+          message0: "LIGHT Frequency  %1 %2",
           args0: [
             {
               type: "field_image",
@@ -3623,7 +3669,8 @@
           style: "control_blocks",
           output: "Boolean",
           extensions: ["servo_color", "led_pin_image_click"]
-        }, {
+        },
+        {
           type: "TDS_Water_sensor",
           message0: "TDS Water Sensor %1 %2",
           args0: [
@@ -3755,7 +3802,7 @@
           ],
           previousStatement: null,
           nextStatement: null,
-          colour: 10,
+          colour: 69,
           tooltip: "If condition is true, run the blocks inside",
           helpUrl: "",
           extensions: ["led_style"]
@@ -4679,6 +4726,33 @@
 
         // If more than two ports are selected, return the first two only
         return [`motion("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+      Blockly.Python['light_freq'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`light_freq("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`light_freq("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`light_freq("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
       Blockly.Python['din_proximity'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
