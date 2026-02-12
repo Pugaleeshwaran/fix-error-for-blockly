@@ -928,7 +928,8 @@
       fill: rgba(148, 163, 184, 0.9) !important;
 
     }
-/* 
+
+    /* 
     .blocklyScrollbarVertical {
       width: 10px;
     }
@@ -1407,7 +1408,7 @@
     <div class="topbar">
       <div class="brand" style="display:flex;align-items:center;gap:10px">
         <img src="./assets/blockly/logo.png" alt="weblogo" style="width:60px; height:auto; object-fit:contain;">
-        <div style="font-size:24px;font-weight:900;text-transform:uppercase">rndmfg</div>
+        <div style="font-size:24px;font-weight:900;text-transform:uppercase">Curio Lab</div>
       </div>
       <div class="btns">
         <!-- New: Connect Board button (for USB on desktop) -->
@@ -1449,6 +1450,10 @@
 
       <button class="button-86" id="upload" role="button">Upload</button>
       <button class="button-87" id="stop" role="button">Stop</button>
+      <button class="button-86" id="soft_reset" role="button">Soft
+        Reset</button>
+      <button class="button-86" id="hard_reset" role="button">Hard
+        Reset</button>
       <!-- <button class="pill"  style="background:#d9f4fb">play</button> -->
       <!-- <button class="pill"  style="background:#ffd8d1">upload</button> -->
       <!-- <button class="pill"  style="background:#ffd8d1">stop</button> -->
@@ -1499,12 +1504,12 @@
       <block type="relay"></block>
       <block type="buzzer"></block>
       <block type="minifan"></block>
-      
+
       <block type="buzzer_component"></block>
       <block type="joystick_move"></block>
       <block type="ir_sen"></block>
       <block type="relay"></block>
-      
+
     </category>
     <category name="Analog" colour="#781692">
       <block type="tep_ana"></block>
@@ -1551,8 +1556,8 @@
       <block type="light_freq"></block>
       <block type="green_led"></block>
       <block type="rgb_display"></block>
-      <block type="rgb_component"></block>
       <block type="rgb_led_display"></block>
+      <block type="rgb_component"></block>
       <block type="LCD_print"></block>
     </category>
     <category name="Tx-Rx" colour="#C0603E">
@@ -1606,6 +1611,226 @@
     </category>
     <category name="Function" custom="PROCEDURE" colour="#FF1493"></category>
     <category name="Variable" custom="VARIABLE" colour="#0000FF"></category>
+
+    <sep></sep>
+    <category name="defult blocks" colour="#9ACD32">
+      <block type="math_number">
+        <field name="NUM">0</field>
+      </block>
+
+      <block type="math_arithmetic">
+        <field name="OP">ADD</field>
+        <value name="A">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="B">
+          <block type="math_number">
+            <field name="NUM">2</field>
+          </block>
+        </value>
+      </block>
+
+      <block type="math_random_int">
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+
+      <!-- <block type="math_trigonometry">
+        <field name="OP">SIN</field>
+        <value name="ANGLE">
+          <block type="math_number">
+            <field name="NUM">90</field>
+          </block>
+        </value>
+      </block> -->
+
+      <block type="text">
+        <field name="TEXT">Hello</field>
+      </block>
+
+      <block type="text_join">
+        <value name="ADD0">
+          <block type="text">
+            <field name="TEXT">Hello</field>
+          </block>
+        </value>
+        <value name="ADD1">
+          <block type="text">
+            <field name="TEXT">World</field>
+          </block>
+        </value>
+      </block>
+
+      <block type="text_length">
+        <value name="VALUE">
+          <block type="text">
+            <field name="TEXT">Blockly</field>
+          </block>
+        </value>
+      </block>
+
+      <block type="variables_set">
+        <field name="VAR">item</field>
+        <value name="VALUE">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+      </block>
+
+      <block type="variables_get">
+        <field name="VAR">item</field>
+      </block>
+
+      <block type="variables_set">
+        <field name="VAR">counter</field>
+        <value name="VALUE">
+          <block type="math_number">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+      </block>
+
+      <block type="controls_if">
+        <value name="IF0">
+          <block type="logic_boolean">
+            <field name="BOOL">TRUE</field>
+          </block>
+        </value>
+        <statement name="DO0">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </statement>
+      </block>
+
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <block type="math_number">
+            <field name="NUM">5</field>
+          </block>
+        </value>
+        <statement name="DO">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </statement>
+      </block>
+
+      <block type="controls_for">
+        <field name="VAR">i</field>
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+        <statement name="DO">
+          <block type="math_number">
+            <field name="NUM">i</field>
+          </block>
+        </statement>
+      </block>
+
+      <block type="logic_boolean">
+        <field name="BOOL">TRUE</field>
+      </block>
+
+      <block type="logic_compare">
+        <field name="OP">EQ</field>
+        <value name="A">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+        <value name="B">
+          <block type="math_number">
+            <field name="NUM">5</field>
+          </block>
+        </value>
+      </block>
+
+      <block type="logic_operation">
+        <field name="OP">AND</field>
+        <value name="A">
+          <block type="logic_boolean">
+            <field name="BOOL">TRUE</field>
+          </block>
+        </value>
+        <value name="B">
+          <block type="logic_boolean">
+            <field name="BOOL">FALSE</field>
+          </block>
+        </value>
+      </block>
+
+      <block type="procedures_defnoreturn">
+        <field name="NAME">doSomething</field>
+        <statement name="STACK">
+          <block type="math_number">
+            <field name="NUM">5</field>
+          </block>
+        </statement>
+      </block>
+
+      <block type="procedures_callnoreturn">
+        <field name="NAME">doSomething</field>
+      </block>
+
+      <!-- <block type="events_whenflagclicked"></block> -->
+
+      <!-- <block type="events_whenkeypressed">
+        <field name="KEY">space</field>
+      </block> -->
+
+      <!-- <block type="events_whenthisspriteclicked"></block> -->
+      <!-- <block type="output_print">
+        <value name="TEXT">
+          <block type="text">
+            <field name="TEXT">Hello World!</field>
+          </block>
+        </value>
+      </block>
+
+      <block type="input_keypressed">
+        <field name="KEY">space</field>
+      </block>
+
+      <block type="output_led">
+        <field name="STATE">ON</field>
+      </block> -->
+      <!-- <block type="comment">
+        <field name="TEXT">This is a comment</field>
+      </block> -->
+      <!-- <block type="sensors_temperature">
+        <field name="SENSOR">tempSensor</field>
+      </block>
+
+      <block type="sensors_analog">
+        <field name="PIN">A0</field>
+      </block>
+
+      <block type="sensors_digital">
+        <field name="PIN">D2</field>
+      </block> -->
+
+    </category>
+
+
   </xml>
 
   <!-- Port selection modal -->
@@ -7359,6 +7584,22 @@
             await sendCodeToBLEBoot(code);  // Sends via Bluetooth
           }
         }
+      };
+
+      // --- Inside your start() function, near other button handlers ---
+
+      // SOFT RESET Button
+      document.getElementById("soft_reset").onclick = async () => {
+        // This sends "SOFT_RESET" string which your backend catches to sys.exit()
+        const success = await sendUnifiedCommand("SOFT_RESET");
+        if (success) handleBoardMessage("Soft Reset triggered");
+      };
+
+      // HARD RESET Button
+      document.getElementById("hard_reset").onclick = async () => {
+        // This sends "HARD_RESET" which your backend catches to machine.reset()
+        const success = await sendUnifiedCommand("HARD_RESET");
+        if (success) handleBoardMessage("Hardware Rebooting...");
       };
 
 
