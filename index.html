@@ -1523,7 +1523,6 @@
       <block type="ecg"></block>
       <block type="ana_temp"></block>
       <block type="water-turbidity-sensor"></block>
-
       <block type="shock_sensor"></block>
       <block type="flex-sensor"></block>
       <block type="Air_quality_sensor"></block>
@@ -1534,6 +1533,7 @@
       <block type="water_sensor"></block>
       <block type="din_ultra"></block>
       <block type="voltage_sensor"></block>
+      <block type="huminity"></block>
     </category>
     <category name="I2c" colour="#A020F0">
       <block type="magnetic_sensor"></block>
@@ -3755,6 +3755,28 @@
           extensions: ["led_pin_image_click", "servo_color"]
         },
         {
+          type: "huminity",
+          message0: "Huminity %1 %2 ",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            },
+
+          ],
+          output: "Boolean",
+          extensions: ["led_pin_image_click", "servo_color"]
+        },
+        {
           type: "buzzer_component",
           message0: "buzzer_component %1 %2 %3 %4 %5",
           args0: [
@@ -5696,6 +5718,33 @@
 
         // If more than two ports are selected, return the first two only
         return [`flex("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+      Blockly.Python['huminity'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`huminity("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`huminity("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`huminity("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
       Blockly.Python['buzzer_component'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
