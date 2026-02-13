@@ -1052,6 +1052,12 @@
       margin-top: 0;
     }
 
+    #responseDisplay {
+      height: 250px;
+      background-color: #9ca3af;
+      padding: 10px;
+      border-radius: 15px;
+    }
 
     @media screen and (max-width: 1200px) {
       .app {
@@ -1534,6 +1540,7 @@
       <block type="din_ultra"></block>
       <block type="voltage_sensor"></block>
       <block type="huminity"></block>
+      <block type="ldr"></block>
     </category>
     <category name="I2c" colour="#A020F0">
       <block type="magnetic_sensor"></block>
@@ -2524,11 +2531,10 @@
         },
         {
           type: "lp_label",
-          message0: "label %1",
+          message0: "Print %1",
           args0: [{
-            type: "field_input",
+            type: "input_value",
             name: "NAME",
-            text: "lbl1"
           }],
           previousStatement: null,
           nextStatement: null,
@@ -4098,6 +4104,27 @@
           extensions: ["temp_style", "led_pin_image_click"]
         },
         {
+          type: "ldr",
+          message0: "LDR %1 %2",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            }],
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style", "led_pin_image_click"]
+        },
+        {
           type: "soil_moisture",
           message0: "Soil Moisture %1 %2",
           args0: [
@@ -4666,20 +4693,15 @@
           return `control_motor("${ports[0]}",${speed},${state})\n`;
         }
         const portList = ports.map(p => `"${p}"`).join(', ');
-        return `control.motor(${portList},${state},${angle})\n`;
+        return `control.motor(${portList},${speed},${state})\n`;
       };
 
       Blockly.Python['start'] = function (block) {
         const body =
           Blockly.Python.statementToCode(block, 'DO') || '    pass\n';
 
-        const value =
-          Blockly.Python.valueToCode(
-            block,
-            'VALUE',
-            Blockly.Python.ORDER_NONE
-          );//|| 'None';
-
+        const value = Blockly.Python.valueToCode(block, 'VALUE', Blockly.Python.ORDER_NONE
+        );//|| 'None';
         return `def start(${value}):\n${body} \n`;
       };
       Blockly.Python['do_dc_motor2'] = function (block) {
@@ -4734,7 +4756,10 @@
         return `for _ in range(${n}):\n${body}`;
       };
 
-      py['lp_label'] = b => `# label: ${b.getFieldValue('NAME') || 'lbl1'}\n`;
+      py['lp_label'] = function (b) {
+        var name = Blockly.Python.valueToCode(b, 'NAME', Blockly.Python.ORDER_NONE); // Correct way to get field value
+        return `print(${name || ''}) \n`;  // Ensure empty string fallback
+      };
 
       Blockly.Python['din_if_else'] = function (block) {
         const condition = Blockly.Python.valueToCode(block, 'COND', Blockly.Python.ORDER_NONE) || 'False';  // Ensure Boolean
@@ -5409,6 +5434,33 @@
 
         // If more than two ports are selected, return the first two only
         return [`heart_beat("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+      Blockly.Python['ldr'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`LDR("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`LDR("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`LDR("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
 
       Blockly.Python['soil_moisture'] = function (block) {
