@@ -1096,14 +1096,15 @@
       .blocklyScrollbarHorizontal {
         height: 15px;
       }
-    #responseDisplay {
-      height: 50%;
-      
-    }
 
-    #pyOut {
-      height: 50%;
-    }
+      #responseDisplay {
+        height: 50%;
+
+      }
+
+      #pyOut {
+        height: 50%;
+      }
 
     }
 
@@ -1619,6 +1620,7 @@
       <block type="lp_start"></block>
       <block type="lp_repeat_count"></block>
       <block type="lp_label"></block>
+      <block type="compare"></block>
 
     </category>
 
@@ -2566,6 +2568,21 @@
           extensions: ["dc_color"]
         },
         {
+          type: "compare",
+          message0: "RDX %1 %2",
+          args0: [{
+            type: "input_value",
+            name: "NAME",
+          },
+          {
+            type: "input_value",
+            name: "NAME2",
+          }],
+          previousStatement: null,
+          nextStatement: null,
+          extensions: ["dc_color"]
+        },
+        {
           type: "din_if_else",
           message0: "if %1",
           args0: [{ type: "input_value", name: "COND", check: "Boolean" }],
@@ -3134,7 +3151,7 @@
                 ['>=', '>='],
                 ['<=', '<='],
                 ['!=', '!='],
-                ['=','=']
+                ['=', '=']
               ]
             },
             {
@@ -4907,6 +4924,11 @@
       py['lp_label'] = function (b) {
         var name = Blockly.Python.valueToCode(b, 'NAME', Blockly.Python.ORDER_NONE); // Correct way to get field value
         return `print(${name || ''}) \n`;  // Ensure empty string fallback
+      };
+         py['compare'] = function (b) {
+        var name = Blockly.Python.valueToCode(b, 'NAME', Blockly.Python.ORDER_NONE); // Correct way to get field value
+        var name2 = Blockly.Python.valueToCode(b, 'NAME2', Blockly.Python.ORDER_NONE);
+        return `${name || ''} = ${name2|| ''} \n`;  // Ensure empty string fallback
       };
 
       Blockly.Python['din_if_else'] = function (block) {
