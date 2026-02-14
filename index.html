@@ -1053,10 +1053,14 @@
     }
 
     #responseDisplay {
-      height: 250px;
+      height: 50%;
       background-color: #9ca3af;
       padding: 10px;
       border-radius: 15px;
+    }
+
+    #pyOut {
+      height: 50%;
     }
 
     @media screen and (max-width: 1200px) {
@@ -1092,7 +1096,14 @@
       .blocklyScrollbarHorizontal {
         height: 15px;
       }
+    #responseDisplay {
+      height: 50%;
+      
+    }
 
+    #pyOut {
+      height: 50%;
+    }
 
     }
 
@@ -1477,14 +1488,14 @@
         </header>
         <pre id="pyOut"># drag & drop blocks to generate Python…</pre>
         <div id="responseDisplay">Waiting for response...</div>
-        <div class="wifi-return">
+        <!-- <div class="wifi-return">
           🔥 Fire: <span id="fireStatus">--</span><br>
           📏 Distance: <span id="distance">--</span><br>
           🔄 Servo: <span id="servoAngle">--</span><br>
           💡 LED: <span id="ledStatus">--</span><br>
           ⚙️ Motor: <span id="motorStatus">--</span><br>
           🌡️ Tem:<span id="temStatus">--</span>
-        </div>
+        </div> -->
 
       </div>
     </section>
@@ -1539,7 +1550,7 @@
       <block type="water_sensor"></block>
       <block type="din_ultra"></block>
       <block type="voltage_sensor"></block>
-      <block type="huminity"></block>
+      <block type="humidity"></block>
       <block type="ldr"></block>
     </category>
     <category name="I2c" colour="#A020F0">
@@ -1547,8 +1558,22 @@
       <block type="colour_sen"></block>
       <block type="accelerometer_sensor"></block>
       <block type="rtc_sensor"></block>
-
       <block type="ambient-sen"></block>
+      <block type="LCD"></block>
+      <block type="pressure"></block>
+      <block type="compass"></block>
+      <block type="ceprom"></block>
+      <block type="gusture"></block>
+      <block type="ir_temp"></block>
+      <block type="motor_driver"></block>
+      <block type="nfc_reader"></block>
+      <block type="mag_encoder"></block>
+      <block type="rfc"></block>
+      <block type="text_speech"></block>
+      <block type="touch_sensor"></block>
+      <block type="uv_sensor"></block>
+      <block type="temp_sensor"></block>
+      <block type="accelerometer"></block>
     </category>
     <category name="PWM" colour="#781692">
       <block type="do_dc_motor"></block>
@@ -1620,7 +1645,7 @@
     <category name="Variable" custom="VARIABLE" colour="#0000FF"></category>
 
     <sep></sep>
-    <category name="defult blocks" colour="#9ACD32">
+    <category name="default block" colour="#9ACD32">
       <block type="math_number">
         <field name="NUM">0</field>
       </block>
@@ -3108,7 +3133,8 @@
                 ['==', '=='],
                 ['>=', '>='],
                 ['<=', '<='],
-                ['!=', '!=']
+                ['!=', '!='],
+                ['=','=']
               ]
             },
             {
@@ -3761,7 +3787,7 @@
           extensions: ["led_pin_image_click", "servo_color"]
         },
         {
-          type: "huminity",
+          type: "humidity",
           message0: "Huminity %1 %2 ",
           args0: [
             {
@@ -4298,7 +4324,7 @@
         },
         {
           type: "magnetic_sensor",
-          message0: "Megnetic sensor pin ",
+          message0: "Magnetic sensor pin ",
 
           style: "control_blocks",
           output: "Boolean",
@@ -4323,6 +4349,128 @@
         {
           type: "rtc_sensor",
           message0: "Rtc sensor pin ",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "LCD",
+          message0: "LCD pin ",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        ,
+        {
+          type: "pressure",
+          message0: "Pressure pin ",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        ,
+        {
+          type: "compass",
+          message0: "compass",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "ceprom",
+          message0: "ceprom",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "gusture",
+          message0: "Gusture",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "ir_temp",
+          message0: "IR temp",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "motor_driver",
+          message0: "Motor Driver",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "nfc_reader",
+          message0: "NFC Reader",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "mag_encoder",
+          message0: "Mag Encoder",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "text_speech",
+          message0: "Text Speech",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "rfc",
+          message0: "RFC",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "touch_sensor",
+          message0: "Touch Sensor",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "uv_sensor",
+          message0: "UV Sensor",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "temp_sensor",
+          message0: "Temp Sensor",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "accelerometer",
+          message0: "Accelerometer",
 
           style: "control_blocks",
           output: "Boolean",
@@ -5771,7 +5919,7 @@
         // If more than two ports are selected, return the first two only
         return [`flex("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
-      Blockly.Python['huminity'] = function (block) {
+      Blockly.Python['humidity'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
 
         // Split ports like "D3,H1"
@@ -5787,16 +5935,16 @@
 
         // If one port is selected, return code for that port only
         if (pins.length === 1) {
-          return [`huminity("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`humidity("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If two ports are selected, use both for Trig and Echo
         if (pins.length === 2) {
-          return [`huminity("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`humidity("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If more than two ports are selected, return the first two only
-        return [`huminity("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        return [`humidity("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
       Blockly.Python['buzzer_component'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
@@ -5989,6 +6137,22 @@
       py['colour_sen'] = b => [`colour()`, py.ORDER_ATOMIC];
       py['accelerometer_sensor'] = b => [`accelerometer()`, py.ORDER_ATOMIC];
       py['rtc_sensor'] = b => [`rtc()`, py.ORDER_ATOMIC];
+      py['LCD'] = b => [`LCD()`, py.ORDER_ATOMIC];
+      py['pressure'] = b => [`pressure()`, py.ORDER_ATOMIC];
+      py['compass'] = b => [`compass()`, py.ORDER_ATOMIC];
+      py['ceprom'] = b => [`ceprom()`, py.ORDER_ATOMIC];
+      py['gusture'] = b => [`gusture()`, py.ORDER_ATOMIC];
+      py['ir_temp'] = b => [`ir_temp()`, py.ORDER_ATOMIC];
+      py['motor_driver'] = b => [`motor_driver()`, py.ORDER_ATOMIC];
+      py['nfc_reader'] = b => [`nfc_reader()`, py.ORDER_ATOMIC];
+      py['mag_encoder'] = b => [`mag_encoder()`, py.ORDER_ATOMIC];
+      py['rfc'] = b => [`rfc()`, py.ORDER_ATOMIC];
+      py['text_speech'] = b => [`text_speech()`, py.ORDER_ATOMIC];
+      py['uv_sensor'] = b => [`uv_sensor()`, py.ORDER_ATOMIC];
+      py['temp_sensor'] = b => [`temp_sensor()`, py.ORDER_ATOMIC];
+      py['accelerometer'] = b => [`accelerometer()`, py.ORDER_ATOMIC];
+
+
 
       Blockly.Python['ir_sen'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
