@@ -1575,6 +1575,7 @@
       <block type="uv_sensor"></block>
       <block type="temp_sensor"></block>
       <block type="accelerometer"></block>
+      <block type="max"></block>
     </category>
     <category name="PWM" colour="#781692">
       <block type="do_dc_motor"></block>
@@ -4484,6 +4485,15 @@
           style: "control_blocks",
           output: "Boolean",
           extensions: ["temp_style"]
+        }
+        ,
+        {
+          type: "max",
+          message0: "Max",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
         },
         {
           type: "accelerometer",
@@ -6173,6 +6183,7 @@
       py['uv_sensor'] = b => [`uv_sensor()`, py.ORDER_ATOMIC];
       py['temp_sensor'] = b => [`temp_sensor()`, py.ORDER_ATOMIC];
       py['accelerometer'] = b => [`accelerometer()`, py.ORDER_ATOMIC];
+       py['max'] = b => [`max()`, py.ORDER_ATOMIC];
 
 
 
