@@ -2411,7 +2411,7 @@
         ,
         {
           type: "do_servo",
-          message0: "servo on %1 %2 %3 %4",
+          message0: "servo on %1 %2 %3",
           args0: [
             {
               type: "field_image",
@@ -2426,14 +2426,14 @@
               name: "SERVO_PORT",
               text: ""
             },
-            {
-              type: "field_dropdown",
-              name: "STATE",
-              options: [
-                ["forward", "forward"],
-                ["backward", "backward"]
-              ]
-            },
+            // {
+            //   type: "field_dropdown",
+            //   name: "STATE",
+            //   options: [
+            //     ["forward", "forward"],
+            //     ["backward", "backward"]
+            //   ]
+            // },
             {
               type: "field_number",
               name: "ANG",
@@ -4898,16 +4898,16 @@
       Blockly.Python['do_servo'] = function (block) {
         const ports = (block.getFieldValue('SERVO_PORT') || '').split(',').map(s => s.trim()).filter(Boolean);
         const angle = block.getFieldValue('ANG') || 0;
-        const state = block.getFieldValue('STATE')
+        // const state = block.getFieldValue('STATE')
 
         if (ports.length === 0) {
           return "# do_servo: no servo port selected\n";
         }
         if (ports.length === 1) {
-          return `servo("${ports[0]}",${state},${angle})\n`;
+          return `servo("${ports[0]}",${angle})\n`;
         }
         const portList = ports.map(p => `"${p}"`).join(', ');
-        return `servo(${portList},${state},${angle})\n`;
+        return `servo(${portList},${angle})\n`;
       };
 
       Blockly.Python['ctl_delay'] = function (block) {
