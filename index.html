@@ -1606,6 +1606,7 @@
     </category>
 
     <category name="SPI" colour="#2EB061">
+       <block type="rfid"></block>
       <block type="sensor"></block>
       <block type="tem_sensor"></block>
       <block type="xray_sensor"></block>
@@ -4503,6 +4504,14 @@
           output: "Boolean",
           extensions: ["temp_style"]
         },
+         {
+          type: "rfid",
+          message0: "RFID",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
         {
           type: "ir_sen",
           message0: "IR Sensor %1 %2",
@@ -6184,7 +6193,7 @@
       py['temp_sensor'] = b => [`temp_sensor()`, py.ORDER_ATOMIC];
       py['accelerometer'] = b => [`accelerometer()`, py.ORDER_ATOMIC];
        py['max'] = b => [`max()`, py.ORDER_ATOMIC];
-
+py['rfid'] = b => [`rfid()`, py.ORDER_ATOMIC];
 
 
       Blockly.Python['ir_sen'] = function (block) {
