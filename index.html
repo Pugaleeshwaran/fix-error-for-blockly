@@ -1606,7 +1606,7 @@
     </category>
 
     <category name="SPI" colour="#2EB061">
-       <block type="rfid"></block>
+      <block type="rfid"></block>
       <block type="sensor"></block>
       <block type="tem_sensor"></block>
       <block type="xray_sensor"></block>
@@ -4504,7 +4504,7 @@
           output: "Boolean",
           extensions: ["temp_style"]
         },
-         {
+        {
           type: "rfid",
           message0: "RFID",
 
@@ -4944,10 +4944,10 @@
         var name = Blockly.Python.valueToCode(b, 'NAME', Blockly.Python.ORDER_NONE); // Correct way to get field value
         return `print(${name || ''}) \n`;  // Ensure empty string fallback
       };
-         py['compare'] = function (b) {
+      py['compare'] = function (b) {
         var name = Blockly.Python.valueToCode(b, 'NAME', Blockly.Python.ORDER_NONE); // Correct way to get field value
         var name2 = Blockly.Python.valueToCode(b, 'NAME2', Blockly.Python.ORDER_NONE);
-        return `${name || ''} = ${name2|| ''} \n`;  // Ensure empty string fallback
+        return `${name || ''} = ${name2 || ''} \n`;  // Ensure empty string fallback
       };
 
       Blockly.Python['din_if_else'] = function (block) {
@@ -6192,8 +6192,8 @@
       py['uv_sensor'] = b => [`uv_sensor()`, py.ORDER_ATOMIC];
       py['temp_sensor'] = b => [`temp_sensor()`, py.ORDER_ATOMIC];
       py['accelerometer'] = b => [`accelerometer()`, py.ORDER_ATOMIC];
-       py['max'] = b => [`max()`, py.ORDER_ATOMIC];
-py['rfid'] = b => [`rfid()`, py.ORDER_ATOMIC];
+      py['max'] = b => [`max()`, py.ORDER_ATOMIC];
+      py['rfid'] = b => [`rfid()`, py.ORDER_ATOMIC];
 
 
       Blockly.Python['ir_sen'] = function (block) {
@@ -7311,8 +7311,10 @@ py['rfid'] = b => [`rfid()`, py.ORDER_ATOMIC];
         return;
       }
       //-----------CODE SEND IS HERE---------------
-      const payload = `@@START\n${code}\n@@END`;
 
+      console.log("Start Send !!")
+      const payload = `@@START\n${code}\n@@END`;
+      console.log("END Send !!")
       try {
         await stm32Writer.write(stm32Encoder.encode(payload));
         console.log("user.py sent to board");
@@ -7603,6 +7605,7 @@ py['rfid'] = b => [`rfid()`, py.ORDER_ATOMIC];
         handleBoardMessage("BLE: uploading...");
 
         // START marker
+         console.log("BLE Start Send !!")
         await bleControlChar.writeValue(encoder.encode("@@START\n"));
 
         for (let i = 0; i < rawData.length; i += CHUNK_SIZE) {
@@ -7614,7 +7617,9 @@ py['rfid'] = b => [`rfid()`, py.ORDER_ATOMIC];
         // END marker
         await bleControlChar.writeValue(encoder.encode("\n@@END"));
 
+
         handleBoardMessage(`BLE: upload done (${rawData.length} bytes)`);
+         console.log("BLE END Send !!")
 
       } catch (e) {
         console.error("BLE upload error:", e);
