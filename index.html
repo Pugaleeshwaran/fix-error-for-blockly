@@ -3200,7 +3200,7 @@
           colour: "#81d4ed",
           previousStatement: null,
           nextStatement: null,
-          extensions: ["led_pin_image_click", "dummy_style"]
+          extensions: ["port_image_click", "dummy_style"]
         },
         {
           type: 'yellow_led',
@@ -3239,7 +3239,7 @@
           colour: "#81d4ed",
           previousStatement: null,
           nextStatement: null,
-          extensions: ["led_pin_image_click", "dummy_style"]
+          extensions: ["port_image_click", "dummy_style"]
         },
         {
           type: 'green_led',
@@ -3278,7 +3278,7 @@
           colour: "#81d4ed",
           previousStatement: null,
           nextStatement: null,
-          extensions: ["led_pin_image_click", "dummy_style"]
+          extensions: ["port_image_click", "dummy_style"]
         },
         {
           type: "sensor1",
@@ -5013,7 +5013,7 @@
         const pins = pinsTxt.split(',').map(s => s.trim()).filter(Boolean);
 
         if (!pins.length) {
-          return "# Green_blink: no pins selected\n";
+          return "# Yellow_blink: no pins selected\n";
         }
 
         let code = '';
