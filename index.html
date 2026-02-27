@@ -1606,6 +1606,7 @@
     </category>
 
     <category name="SPI" colour="#2EB061">
+      <block type="rfid"></block>
       <block type="sensor"></block>
       <block type="tem_sensor"></block>
       <block type="xray_sensor"></block>
@@ -3200,7 +3201,7 @@
           colour: "#81d4ed",
           previousStatement: null,
           nextStatement: null,
-          extensions: ["led_pin_image_click", "dummy_style"]
+          extensions: ["port_image_click", "dummy_style"]
         },
         {
           type: 'yellow_led',
@@ -3239,7 +3240,7 @@
           colour: "#81d4ed",
           previousStatement: null,
           nextStatement: null,
-          extensions: ["led_pin_image_click", "dummy_style"]
+          extensions: ["port_image_click", "dummy_style"]
         },
         {
           type: 'green_led',
@@ -3278,7 +3279,7 @@
           colour: "#81d4ed",
           previousStatement: null,
           nextStatement: null,
-          extensions: ["led_pin_image_click", "dummy_style"]
+          extensions: ["port_image_click", "dummy_style"]
         },
         {
           type: "sensor1",
@@ -4518,6 +4519,14 @@
           extensions: ["temp_style"]
         },
         {
+          type: "rfid",
+          message0: "RFID",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
           type: "ir_sen",
           message0: "IR Sensor %1 %2",
           args0: [
@@ -5027,7 +5036,7 @@
         const pins = pinsTxt.split(',').map(s => s.trim()).filter(Boolean);
 
         if (!pins.length) {
-          return "# Green_blink: no pins selected\n";
+          return "# Yellow_blink: no pins selected\n";
         }
 
         let code = '';
@@ -6227,7 +6236,11 @@
       py['temp_sensor'] = b => [`temp_sensor()`, py.ORDER_ATOMIC];
       py['accelerometer'] = b => [`accelerometer()`, py.ORDER_ATOMIC];
       py['max'] = b => [`max()`, py.ORDER_ATOMIC];
+<<<<<<< HEAD
 
+=======
+      py['rfid'] = b => [`rfid()`, py.ORDER_ATOMIC];
+>>>>>>> b52e32224b827a17910fea4ccab0069e59689b82
 
 
       Blockly.Python['ir_sen'] = function (block) {
@@ -7345,8 +7358,10 @@
         return;
       }
       //-----------CODE SEND IS HERE---------------
-      const payload = `@@START\n${code}\n@@END`;
 
+      console.log("Start Send !!")
+      const payload = `@@START\n${code}\n@@END`;
+      console.log("END Send !!")
       try {
         await stm32Writer.write(stm32Encoder.encode(payload));
         console.log("user.py sent to board");
@@ -7637,6 +7652,7 @@
         handleBoardMessage("BLE: uploading...");
 
         // START marker
+         console.log("BLE Start Send !!")
         await bleControlChar.writeValue(encoder.encode("@@START\n"));
 
         for (let i = 0; i < rawData.length; i += CHUNK_SIZE) {
@@ -7648,7 +7664,9 @@
         // END marker
         await bleControlChar.writeValue(encoder.encode("\n@@END"));
 
+
         handleBoardMessage(`BLE: upload done (${rawData.length} bytes)`);
+         console.log("BLE END Send !!")
 
       } catch (e) {
         console.error("BLE upload error:", e);
