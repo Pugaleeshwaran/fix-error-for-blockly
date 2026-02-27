@@ -6236,11 +6236,7 @@
       py['temp_sensor'] = b => [`temp_sensor()`, py.ORDER_ATOMIC];
       py['accelerometer'] = b => [`accelerometer()`, py.ORDER_ATOMIC];
       py['max'] = b => [`max()`, py.ORDER_ATOMIC];
-<<<<<<< HEAD
-
-=======
       py['rfid'] = b => [`rfid()`, py.ORDER_ATOMIC];
->>>>>>> b52e32224b827a17910fea4ccab0069e59689b82
 
 
       Blockly.Python['ir_sen'] = function (block) {
@@ -7652,7 +7648,7 @@
         handleBoardMessage("BLE: uploading...");
 
         // START marker
-         console.log("BLE Start Send !!")
+        console.log("BLE Start Send !!")
         await bleControlChar.writeValue(encoder.encode("@@START\n"));
 
         for (let i = 0; i < rawData.length; i += CHUNK_SIZE) {
@@ -7666,7 +7662,7 @@
 
 
         handleBoardMessage(`BLE: upload done (${rawData.length} bytes)`);
-         console.log("BLE END Send !!")
+        console.log("BLE END Send !!")
 
       } catch (e) {
         console.error("BLE upload error:", e);
