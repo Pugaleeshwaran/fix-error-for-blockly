@@ -1827,43 +1827,6 @@
         <field name="NAME">doSomething</field>
       </block>
 
-      <!-- <block type="events_whenflagclicked"></block> -->
-
-      <!-- <block type="events_whenkeypressed">
-        <field name="KEY">space</field>
-      </block> -->
-
-      <!-- <block type="events_whenthisspriteclicked"></block> -->
-      <!-- <block type="output_print">
-        <value name="TEXT">
-          <block type="text">
-            <field name="TEXT">Hello World!</field>
-          </block>
-        </value>
-      </block>
-
-      <block type="input_keypressed">
-        <field name="KEY">space</field>
-      </block>
-
-      <block type="output_led">
-        <field name="STATE">ON</field>
-      </block> -->
-      <!-- <block type="comment">
-        <field name="TEXT">This is a comment</field>
-      </block> -->
-      <!-- <block type="sensors_temperature">
-        <field name="SENSOR">tempSensor</field>
-      </block>
-
-      <block type="sensors_analog">
-        <field name="PIN">A0</field>
-      </block>
-
-      <block type="sensors_digital">
-        <field name="PIN">D2</field>
-      </block> -->
-
     </category>
 
 
@@ -2451,7 +2414,7 @@
         },
         {
           type: "bt_send",
-          message0: "Bluetooth send %1",
+          message0: "TFT Display %1",
           args0: [
             {
               type: "input_value",
@@ -4815,7 +4778,7 @@
       Blockly.Python['bt_send'] = function (block) {
         const txt = Blockly.Python.valueToCode(block, 'TEXT', Blockly.Python.ORDER_NONE) || "''";
         // Example: send text over Bluetooth
-        return `robot.bt_send(${txt})\n`;
+        return `tft(${txt})\n`;
       };
       Blockly.Python['sen_ultrasonic'] = function (block) {
         const port = block.getFieldValue('PORT') || 0;
