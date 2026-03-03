@@ -351,12 +351,26 @@
       align-items: center;
     }
 
+    .keybox1 {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      justify-content: center;
+    }
+
     .row {
       text-align: center;
     }
 
     .box2 {
       display: flex;
+    }
+
+    .keybox2 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
     }
 
     .box-heading {
@@ -501,6 +515,13 @@
     }
 
     #ledPinSelectionModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000
+    }
+
+    #keyPinSelectionModal {
       display: none;
       position: fixed;
       inset: 0;
@@ -751,8 +772,10 @@
     }
 
     /* LED pin modal overlay, same behavior as other modals */
-    #ledPinSelectionModal {
-      width: 300px;
+    #ledPinSelectionModal,
+    #keyPinSelectionModal {
+      width: max-content;
+      min-width: 300px;
       margin: auto;
       padding: 20px;
 
@@ -1593,6 +1616,9 @@
       <block type="LCD_print"></block>
     </category>
     <category name="Tx-Rx" colour="#C0603E">
+      <block type="finger_print_enroll"></block>
+      <block type="finger_print_match"></block>
+      <block type="keypad"></block>
       <block type="mini_motor"></block>
       <block type="remote_motor"></block>
       <block type="water_motor"></block>
@@ -2000,6 +2026,45 @@
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
         <button type="button" onclick="saveLedPinSelection()">Save</button>
         <button type="button" onclick="closeLedPinModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keypad selection modal -->
+  <div id="keyPinSelectionModal">
+    <div class="box">
+      <h3>Keypad Pin</h3>
+
+      <div class="keybox1">
+        <div class="row"><label><input type="checkbox" id="keyPinA3">A3</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinE3">E3</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinE12">E12</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinE11">E11</label></div>
+      </div>
+
+      <div class="keybox2">
+        <div class="row"><label><input type="checkbox" id="keyPinF3">F3</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinG4">G4</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinC8">C8</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinC9">C9</label></div>
+      </div>
+      <div class="keybox1">
+
+        <div class="row"><label><input type="checkbox" id="keyPinF4">F4</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinG5">G5</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinB15">B15</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinE13">E13</label></div>
+
+      </div>
+      <div class="keybox2">
+        <div class="row"><label><input type="checkbox" id="keyPinF5">F5</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinG6">G6</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinE14">E14</label></div>
+        <div class="row"><label><input type="checkbox" id="keyPinD15">D15</label></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button type="button" onclick="savekeyPinSelection()">Save</button>
+        <button type="button" onclick="closekeyPinModal()">Cancel</button>
       </div>
     </div>
   </div>
@@ -4200,7 +4265,7 @@
         },
         {
           type: "temp2-sensor",
-          message0: "temp01 %1 %2 ",
+          message0: "Temp Analog %1 %2 ",
           args0: [
             {
               type: "field_image",
@@ -4379,6 +4444,22 @@
         {
           type: "rfc",
           message0: "RFC",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "finger_print_enroll",
+          message0: "Fingerprint Enroll",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "finger_print_match",
+          message0: "Fingerprint Match ",
 
           style: "control_blocks",
           output: "Boolean",
@@ -4589,6 +4670,27 @@
           "tooltip": "Set RGB LED color using color wheel",
           "helpUrl": ""
         },
+        {
+          type: "keypad",
+          message0: "Keypad %1 %2",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            }],
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style", "key_pin_image_click"]
+        },
       ]);
 
 
@@ -4660,11 +4762,20 @@
           }
         });
       });
+
       Blockly.Extensions.register('led_pin_image_click', function () {
         const imgField = this.getField('IMG');
         if (!imgField) return;
         imgField.setOnClickHandler(() => {
           openLedPinSelectionModal(this);
+        });
+      });
+
+      Blockly.Extensions.register('key_pin_image_click', function () {
+        const imgField = this.getField('IMG');
+        if (!imgField) return;
+        imgField.setOnClickHandler(() => {
+          openkeyPinSelectionModal(this);
         });
       });
       Blockly.Extensions.register('led_style', function () {
@@ -6136,8 +6247,8 @@
       py['accelerometer'] = b => [`accelerometer()`, py.ORDER_ATOMIC];
       py['max'] = b => [`max()`, py.ORDER_ATOMIC];
       py['rfid'] = b => [`rfid()`, py.ORDER_ATOMIC];
-
-
+      py['finger_print_enroll'] = b => [`fingerprint_enroll()`, py.ORDER_ATOMIC];
+      py['finger_print_match'] = b => [`fingerprint_match()`, py.ORDER_ATOMIC];
       Blockly.Python['ir_sen'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
 
@@ -6293,6 +6404,19 @@
         return `rgb_led("${led}", ${r}, ${g}, ${b}, ${time})\n`;
       };
 
+      Blockly.Python['keypad'] = function (block) {
+        const ports = (block.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean);
+
+        if (ports.length === 0) {
+          return ["# No Keypin selected\n", Blockly.Python.ORDER_ATOMIC];
+        }
+        if (ports.length === 1) {
+          return [`keypad("${ports[0]}")`, Blockly.Python.ORDER_ATOMIC];
+        }
+        const portList = ports.map(p => `"${p}"`).join(', ');
+        return [`keypad(${portList})`, Blockly.Python.ORDER_ATOMIC];
+      };
+
     }
 
 
@@ -6301,18 +6425,28 @@
 
     // THIS IS FOR DIGITAL PINS
     let currentPortBlock = null;
+    let currentSelectedPortArray = [];
     const ALL_PORT_NUMBERS = ["D3", "D4", "D5", "D6", "E3", "G4", "G5", "G6", "D7", "E0", "E1", "G3", "G0", "G1", "G2"];
 
     function openPortSelectionModal(block) {
       currentPortBlock = block;
       const txt = block.getFieldValue('PORTS') || '';
-      const selectedSet = new Set(
-        txt.split(',').map(s => s.trim()).filter(Boolean)
-      );
+      currentSelectedPortArray = txt.split(',').map(s => s.trim()).filter(Boolean);
+
+      const selectedSet = new Set(currentSelectedPortArray);
 
       ALL_PORT_NUMBERS.forEach(p => {
         const cb = document.getElementById('port' + p);
-        if (cb) cb.checked = selectedSet.has(String(p));
+        if (cb) {
+          cb.checked = selectedSet.has(String(p));
+          cb.onclick = (e) => {
+            if (e.target.checked) {
+              if (!currentSelectedPortArray.includes(String(p))) currentSelectedPortArray.push(String(p));
+            } else {
+              currentSelectedPortArray = currentSelectedPortArray.filter(x => x !== String(p));
+            }
+          };
+        }
       });
 
       document.getElementById('portSelectionModal').style.display = 'block';
@@ -6326,13 +6460,7 @@
     function savePortSelection() {
       if (!currentPortBlock) { closePortModal(); return; }
 
-      const sel = [];
-      ALL_PORT_NUMBERS.forEach(p => {
-        const cb = document.getElementById('port' + p);
-        if (cb && cb.checked) sel.push(String(p));
-      });
-
-      const label = sel.length ? sel.join(',') : '—';
+      const label = currentSelectedPortArray.length ? currentSelectedPortArray.join(',') : '—';
       currentPortBlock.setFieldValue(label, 'PORTS');
 
       closePortModal();
@@ -6340,14 +6468,27 @@
 
     //--------------------THIS IS FOR MOTOR PINS--------------
     let currentMotorBlock = null;
+    let currentSelectedMotorArray = [];
 
     function openMotorSelectionModal(block) {
       currentMotorBlock = block;
-      const selectedMotors = new Set((block.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()));
+      const txt = block.getFieldValue('MOTORS') || '';
+      currentSelectedMotorArray = txt.split(',').map(s => s.trim()).filter(Boolean);
+
+      const selectedSet = new Set(currentSelectedMotorArray);
 
       ['E12', 'E11', 'C8', 'C9', 'B15', 'E13', 'E14', 'D15'].forEach(motor => {
-        const checkbox = document.getElementById('motor' + motor);
-        if (checkbox) checkbox.checked = selectedMotors.has(motor);
+        const cb = document.getElementById('motor' + motor);
+        if (cb) {
+          cb.checked = selectedSet.has(motor);
+          cb.onclick = (e) => {
+            if (e.target.checked) {
+              if (!currentSelectedMotorArray.includes(motor)) currentSelectedMotorArray.push(motor);
+            } else {
+              currentSelectedMotorArray = currentSelectedMotorArray.filter(x => x !== motor);
+            }
+          };
+        }
       });
 
       document.getElementById('motorSelectionModal').style.display = 'block';
@@ -6363,13 +6504,7 @@
         return;
       }
 
-      const selected = [];
-      ['E12', 'E11', 'C8', 'C9', 'B15', 'E13', 'E14', 'D15'].forEach(motor => {
-        const checkbox = document.getElementById('motor' + motor);
-        if (checkbox && checkbox.checked) selected.push(motor);
-      });
-
-      const label = selected.length ? selected.join(',') : '—';
+      const label = currentSelectedMotorArray.length ? currentSelectedMotorArray.join(',') : '—';
       currentMotorBlock.setFieldValue(label, 'MOTORS');
 
       closeModal();
@@ -6377,19 +6512,28 @@
 
     /* ==== THIS IS FOR ANALOG PINS ==== */
     let currentLedBlock = null;
+    let currentSelectedLedArray = [];
     const LED_PIN_NAMES = ['C0', 'C1', 'C2', 'F9', 'A3', 'F3', 'F4', 'F5', 'C4', 'C5', 'A1', 'A2', 'A4', 'F8', 'A6'];
 
     function openLedPinSelectionModal(block) {
       currentLedBlock = block;
 
       const txt = block.getFieldValue('PORTS') || '';   // 🔴 changed PINS → PORTS
-      const selected = new Set(
-        txt.split(',').map(s => s.trim()).filter(Boolean)
-      );
+      currentSelectedLedArray = txt.split(',').map(s => s.trim()).filter(Boolean);
+      const selected = new Set(currentSelectedLedArray);
 
       LED_PIN_NAMES.forEach(pin => {
         const cb = document.getElementById('ledPin' + pin);
-        if (cb) cb.checked = selected.has(pin);
+        if (cb) {
+          cb.checked = selected.has(pin);
+          cb.onclick = (e) => {
+            if (e.target.checked) {
+              if (!currentSelectedLedArray.includes(pin)) currentSelectedLedArray.push(pin);
+            } else {
+              currentSelectedLedArray = currentSelectedLedArray.filter(x => x !== pin);
+            }
+          };
+        }
       });
 
       document.getElementById('ledPinSelectionModal').style.display = 'block';
@@ -6406,18 +6550,58 @@
         return;
       }
 
-      const sel = [];
-      LED_PIN_NAMES.forEach(pin => {
-        const cb = document.getElementById('ledPin' + pin);
-        if (cb && cb.checked) sel.push(pin);
-      });
-
-      const label = sel.length ? sel.join(',') : '—';
+      const label = currentSelectedLedArray.length ? currentSelectedLedArray.join(',') : '—';
       currentLedBlock.setFieldValue(label, 'PORTS');   // 🔴 changed PINS → PORTS
 
       closeLedPinModal();
     }
 
+
+    /* ==== THIS IS FOR KEYPAD PINS ==== */
+    let currentkeyBlock = null;
+    let currentSelectedKeyArray = [];
+    const KEY_PIN_NAMES = ['A3', 'E3', 'E12', 'E11', 'F3', 'G4', 'C8', 'C9', 'F4', 'G5', 'B15', 'E13', 'F5', 'G6', 'E14', 'D15'];
+
+    function openkeyPinSelectionModal(block) {
+      currentkeyBlock = block;
+
+      const txt = block.getFieldValue('PORTS') || '';   // 🔴 changed PINS → PORTS
+      currentSelectedKeyArray = txt.split(',').map(s => s.trim()).filter(Boolean);
+      const selected = new Set(currentSelectedKeyArray);
+
+      KEY_PIN_NAMES.forEach(pin => {
+        const cb = document.getElementById('keyPin' + pin);
+        if (cb) {
+          cb.checked = selected.has(pin);
+          cb.onclick = (e) => {
+            if (e.target.checked) {
+              if (!currentSelectedKeyArray.includes(pin)) currentSelectedKeyArray.push(pin);
+            } else {
+              currentSelectedKeyArray = currentSelectedKeyArray.filter(x => x !== pin);
+            }
+          };
+        }
+      });
+
+      document.getElementById('keyPinSelectionModal').style.display = 'block';
+    }
+
+    function closekeyPinModal() {
+      document.getElementById('keyPinSelectionModal').style.display = 'none';
+      currentkeyBlock = null;
+    }
+
+    function savekeyPinSelection() {
+      if (!currentkeyBlock) {
+        closekeyPinModal();
+        return;
+      }
+
+      const label = currentSelectedKeyArray.length ? currentSelectedKeyArray.join(',') : '—';
+      currentkeyBlock.setFieldValue(label, 'PORTS');   // 🔴 changed PINS → PORTS
+
+      closekeyPinModal();
+    }
 
     // // --- Global Variables ---
     // let currentBlockForSpeed = null;
@@ -7327,7 +7511,6 @@
     function handleBoardMessage(line) {
       console.log("Board:", line);
       if (line === ">> Entering Upload Mode...") {
-        console.log("gopal")
       }
 
       if (ackPromiseResolve && line.toLowerCase().includes("ack")) {
