@@ -4927,8 +4927,7 @@
       };
 
       Blockly.Python['start'] = function (block) {
-        const body =
-          Blockly.Python.statementToCode(block, 'DO') || '    pass\n';
+        const body =Blockly.Python.statementToCode(block, 'DO') || '    pass\n';
 
         const value = Blockly.Python.valueToCode(block, 'VALUE', Blockly.Python.ORDER_NONE
         );//|| 'None';
@@ -7946,6 +7945,67 @@
       addGradientDefs();
       killBlueSelection();
       setupGradientAndShadowOnBlocks();
+
+      // ============================================================
+      // FIX: Zelos selected-block glow blocks image field clicks
+      // When a block is selected in Zelos, an invisible <path> sits
+      // on top and swallows pointer events before the image field
+      // can receive them. We disable pointer-events on that glow
+      // path so the image field is always clickable.
+      // ============================================================
+      function fixZelosGlowPointerEvents() {
+        // Disable pointer events on the top-level glow path of selected blocks
+        // but keep pointer events on child elements (fields, inputs, etc.)
+        const styleEl = document.createElement('style');
+        styleEl.id = 'zelos-glow-fix';
+        styleEl.textContent = `
+          /* The selected block's main path is the glow overlay in Zelos.
+             Making it pointer-events:none lets clicks reach the fields below. */
+          .blocklySelected > .blocklyPath {
+            pointer-events: none !important;
+          }
+          /* Re-enable pointer events on everything INSIDE the block
+             so fields, images, dropdowns still work normally */
+          .blocklySelected .blocklyEditableText,
+          .blocklySelected .blocklyText,
+          .blocklySelected image,
+          .blocklySelected foreignObject,
+          .blocklySelected .blocklyDropdownText {
+            pointer-events: all !important;
+          }
+        `;
+        document.head.appendChild(styleEl);
+
+        // Also patch via JS to handle dynamically selected blocks
+        // This re-applies the fix every time selection changes
+        workspace.addChangeListener(function(event) {
+          if (
+            event.type === Blockly.Events.SELECTED ||
+            event.type === Blockly.Events.BLOCK_MOVE
+          ) {
+            // Small timeout to let Zelos finish rendering the glow
+            setTimeout(function() {
+              // Disable pointer events on the glow path of all selected blocks
+              const glowPaths = document.querySelectorAll(
+                '.blocklySelected > .blocklyPath'
+              );
+              glowPaths.forEach(function(path) {
+                path.style.pointerEvents = 'none';
+              });
+
+              // Ensure all images inside selected blocks are still clickable
+              const images = document.querySelectorAll(
+                '.blocklySelected image, .blocklySelected .blocklyEditableText'
+              );
+              images.forEach(function(el) {
+                el.style.pointerEvents = 'all';
+              });
+            }, 0);
+          }
+        });
+      }
+      fixZelosGlowPointerEvents();
+      // ============================================================
 
 
       // HERE WE ADD  COSTOM SOUND 
