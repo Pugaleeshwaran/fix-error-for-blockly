@@ -1612,6 +1612,7 @@
       <block type="voltage_sensor"></block>
       <block type="humidity"></block>
       <block type="ldr"></block>
+      <block type="piezo_sensor"></block>
     </category>
     <category name="I2c" colour="#A020F0">
       <block type="magnetic_sensor"></block>
@@ -3941,6 +3942,28 @@
           output: "Boolean",
           extensions: ["led_pin_image_click", "servo_color"]
         },
+        {
+          type: "piezo_sensor",
+          message0: "Piezo %1 %2 ",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            },
+
+          ],
+          output: "Boolean",
+          extensions: ["led_pin_image_click", "servo_color"]
+        },
 
         {
           type: "joystick_move",
@@ -6089,6 +6112,33 @@
 
         // If more than two ports are selected, return the first two only
         return [`humidity("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+      Blockly.Python['piezo_sensor'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`piezo_sensor("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`piezo_sensor("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`piezo_sensor("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
       Blockly.Python['joystick_move'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
