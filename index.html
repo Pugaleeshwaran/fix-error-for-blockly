@@ -1657,6 +1657,8 @@
       <block type="finger_print_enroll"></block>
       <block type="finger_print_match"></block>
       <block type="keypad"></block>
+      <block type="gps"></block>
+      <block type="gsm"></block>
       <block type="mini_motor"></block>
       <block type="remote_motor"></block>
       <block type="water_motor"></block>
@@ -4755,6 +4757,31 @@
           output: "Boolean",
           extensions: ["temp_style", "key_pin_image_click"]
         },
+        {
+          type: "gps",
+          message0: "GPS ",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "gsm",
+          message0: "GSM %1 %2",
+          args0: [
+            {
+              type: "field_number",
+              name: "VAL1",
+            },
+            {
+              type: "field_input",
+              name: "VAL2",
+            },],
+          colour: "#81d4ed",
+          previousStatement: null,
+          nextStatement: null,
+          extensions: ["port_image_click", "servo_color"]
+        },
       ]);
 
 
@@ -6475,6 +6502,14 @@
         }
         const portList = ports.map(p => `"${p}"`).join(', ');
         return [`keypad(${portList})`, Blockly.Python.ORDER_ATOMIC];
+      };
+      py['gps'] = b => [`gps()`, py.ORDER_ATOMIC];
+
+      Blockly.Python['gsm'] = function (block) {
+        const val1 = block.getFieldValue('VAL1') || 0;
+        const val2 = block.getFieldValue('VAL2') || 0;
+        // ALWAYS return a STRING
+        return `gsm("${val1}","${val2}")\n`;
       };
 
     }
