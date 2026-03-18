@@ -3998,7 +3998,7 @@
         },
         {
           type: "Air_quality_sensor",
-          message0: "Air-quality-sensor  %1 %2",
+          message0: "Air-quality-sensor  %1 %2 %3",
           args0: [
             {
               type: "field_image",
@@ -4012,9 +4012,25 @@
               type: "field_label",
               name: "PORTS",
               text: ""
+            }, {
+              type: "field_dropdown",
+              name: "STATE",
+              options: [
+                ["0", "0"],
+                ["1", "1"],
+                ["2", "2"],
+                ["3", "3"],
+                ["4", "4"],
+                ["5", "5"],
+                ["6", "6"],
+                ["7", "7"],
+                ["8", "8"],
+                ["9", "9"],
+                ["10", "10"],
+              ]
             }],
-          style: "control_blocks",
           output: "Boolean",
+          colour: "#81d4ed",
           extensions: ["servo_color", "led_pin_image_click"]
         },
         {
@@ -6235,7 +6251,7 @@
       };
       Blockly.Python['Air_quality_sensor'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
-
+        const angle = block.getFieldValue('STATE') || 0;
         // Split ports like "D3,H1"
         const pins = portsTxt
           .split(',')
@@ -6249,7 +6265,7 @@
 
         // If one port is selected, return code for that port only
         if (pins.length === 1) {
-          return [`air_quality_sensor("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`air_quality_sensor("${pins[0]}",${angle})`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If two ports are selected, use both for Trig and Echo
@@ -8202,66 +8218,47 @@
       addGradientDefs();
       killBlueSelection();
       setupGradientAndShadowOnBlocks();
+    
+      // ✅ ADD THIS RIGHT HERE
+      (function patchZelosImageClicks() {
+        const blocklyDiv = document.getElementById('blocklyDiv');
+        if (!blocklyDiv) { setTimeout(patchZelosImageClicks, 100); return; }
 
-      // ============================================================
-      // FIX: Zelos selected-block glow blocks image field clicks
-      // When a block is selected in Zelos, an invisible <path> sits
-      // on top and swallows pointer events before the image field
-      // can receive them. We disable pointer-events on that glow
-      // path so the image field is always clickable.
-      // ============================================================
-      function fixZelosGlowPointerEvents() {
-        // Disable pointer events on the top-level glow path of selected blocks
-        // but keep pointer events on child elements (fields, inputs, etc.)
-        const styleEl = document.createElement('style');
-        styleEl.id = 'zelos-glow-fix';
-        styleEl.textContent = `
-          /* The selected block's main path is the glow overlay in Zelos.
-             Making it pointer-events:none lets clicks reach the fields below. */
-          .blocklySelected > .blocklyPath {
-            pointer-events: none !important;
-          }
-          /* Re-enable pointer events on everything INSIDE the block
-             so fields, images, dropdowns still work normally */
-          .blocklySelected .blocklyEditableText,
-          .blocklySelected .blocklyText,
-          .blocklySelected image,
-          .blocklySelected foreignObject,
-          .blocklySelected .blocklyDropdownText {
-            pointer-events: all !important;
-          }
-        `;
-        document.head.appendChild(styleEl);
+        let downX = 0, downY = 0;
 
-        // Also patch via JS to handle dynamically selected blocks
-        // This re-applies the fix every time selection changes
-        workspace.addChangeListener(function (event) {
-          if (
-            event.type === Blockly.Events.SELECTED ||
-            event.type === Blockly.Events.BLOCK_MOVE
-          ) {
-            // Small timeout to let Zelos finish rendering the glow
-            setTimeout(function () {
-              // Disable pointer events on the glow path of all selected blocks
-              const glowPaths = document.querySelectorAll(
-                '.blocklySelected > .blocklyPath'
-              );
-              glowPaths.forEach(function (path) {
-                path.style.pointerEvents = 'none';
-              });
+        blocklyDiv.addEventListener('pointerdown', function (e) {
+          downX = e.clientX;
+          downY = e.clientY;
+        }, true);
 
-              // Ensure all images inside selected blocks are still clickable
-              const images = document.querySelectorAll(
-                '.blocklySelected image, .blocklySelected .blocklyEditableText'
-              );
-              images.forEach(function (el) {
-                el.style.pointerEvents = 'all';
-              });
-            }, 0);
+        blocklyDiv.addEventListener('pointerup', function (e) {
+          const dx = Math.abs(e.clientX - downX);
+          const dy = Math.abs(e.clientY - downY);
+          if (dx > 5 || dy > 5) return; // was a drag, ignore
+
+          const elements = document.elementsFromPoint(e.clientX, e.clientY);
+          const imageEl = elements.find(el =>
+            el.tagName === 'image' || el.tagName === 'IMAGE'
+          );
+          if (!imageEl) return;
+
+          const blocks = workspace.getAllBlocks(false);
+          for (const block of blocks) {
+            for (const input of block.inputList) {
+              for (const field of input.fieldRow) {
+                const root = field.getSvgRoot ? field.getSvgRoot() : null;
+                if (!root) continue;
+                if (root === imageEl || root.contains(imageEl)) {
+                  if (typeof field.clickHandler === 'function') {
+                    field.clickHandler(field);
+                    return;
+                  }
+                }
+              }
+            }
           }
-        });
-      }
-      fixZelosGlowPointerEvents();
+        }, true);
+      })();
       // ============================================================
 
 
