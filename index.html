@@ -1478,6 +1478,57 @@
       box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
 
     }
+
+    /* ===== Flyout Search ===== */
+    .flyout-search {
+      position: absolute;
+      top: 15px;
+      z-index: 100;
+      width: 260px;
+      background: #fff;
+      border-radius: 99px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      display: flex;
+      align-items: center;
+      padding: 8px 14px;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .flyout-search.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-4px);
+    }
+
+    .flyout-search input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font: 500 14px/1.4 Inter, system-ui, sans-serif;
+      margin-left: 8px;
+      background: transparent;
+      color: #2b3c47;
+    }
+
+    .flyout-search i.search-icon {
+      color: #8898a8;
+      font-size: 14px;
+    }
+
+    .flyout-search-clear {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0 4px;
+      outline: none;
+    }
+
+    .flyout-search-clear:hover {
+      color: #f44336;
+    }
   </style>
 </head>
 
@@ -1542,6 +1593,13 @@
     <!-- Main -->
     <section class="main">
       <div class="workspace">
+        <!-- Floating Search Box, initially hidden -->
+        <div id="flyoutSearchContainer" class="flyout-search hidden">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="flyoutSearchInput" placeholder="Search blocks..." autocomplete="off">
+          <button id="flyoutSearchClear" class="flyout-search-clear" style="display:none;"><i
+              class="fa-solid fa-xmark"></i></button>
+        </div>
         <div id="blocklyDiv"></div>
       </div>
       <div id="codePanel" class="code">
@@ -1565,6 +1623,7 @@
 
   <!-- Toolbox -->
   <xml id="toolbox" style="display:none">
+    <category name="Search" custom="SEARCH_CATEGORY" colour="#526271"></category>
     <category name="Digital" colour="#FFD46B">
 
       <block type="din_sound"></block>
@@ -1640,6 +1699,7 @@
       <block type="do_dc_motor"></block>
       <block type="do_servo"></block>
       <block type="do_dc_motor2"></block>
+      <block type="range_ultra"></block>
     </category>
     <category name="LEDs" colour="#FFB56A">
       <block type="do_led_param"></block>
@@ -3287,7 +3347,48 @@
           colour: '#4C97FF',
           output: 'Boolean',
           inputsInline: true
-        }, {
+        },
+
+        {
+          type: "range_ultra",
+          message0: "Range Ultra %1 %2 %3",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            },
+            {
+              type: 'field_dropdown',
+              name: 'OPERATOR',
+              options: [
+                ['5', '5'],
+                ['10', '10'],
+                ['15', '15'],
+                ['20', '20'],
+                ['25', '25'],
+                ['30', '30'],
+                ['35', '35'],
+                ['40', '40'],
+                ['45', '45'],
+                ['50', '50'],
+
+              ]
+            },],
+          colour: "#81d4ed",
+          output: "Boolean",
+          extensions: ["temp_style", "led_pin_image_click"]
+        },
+
+        {
           type: 'red_led',
           message0: "Red LED %1 %2 %3 %4",
           args0: [
@@ -5183,6 +5284,33 @@
         return [code, Blockly.Python.ORDER_RELATIONAL];
       };
 
+      Blockly.Python['range_ultra'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+        var operator = block.getFieldValue('OPERATOR');
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`range_ultra("${pins[0]}",${operator})`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`range_ultra("${pins[0]}","${pins[1]}",${operator})`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`range_ultra("${pins[0]}","${pins[1]}","${pins[2]}",${operator}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
 
       Blockly.Python['red_led'] = function (block) {
         const pinsTxt = block.getFieldValue('PORTS') || '';   // 🔴 PINS → PORTS
@@ -7835,6 +7963,154 @@
 
 
 
+    // ===== Block Search Feature (Inside Flyout) =====
+    function initBlockSearch() {
+      const searchContainer = document.getElementById('flyoutSearchContainer');
+      const searchInput = document.getElementById('flyoutSearchInput');
+      const clearBtn = document.getElementById('flyoutSearchClear');
+      if (!searchInput || !searchContainer) return;
+
+      // Build search index from toolbox XML
+      const toolboxXml = document.getElementById('toolbox');
+      const searchIndex = [];
+      const seen = new Set();
+
+      toolboxXml.querySelectorAll('block[type]').forEach(el => {
+        const type = el.getAttribute('type');
+        if (!type || seen.has(type)) return;
+        seen.add(type);
+
+        const cat = el.closest('category');
+        const catName = cat ? cat.getAttribute('name') : 'Other';
+
+        const displayName = type
+          .replace(/_/g, ' ')
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, c => c.toUpperCase());
+
+        searchIndex.push({
+          type,
+          name: displayName,
+          category: catName,
+          search: (type + ' ' + displayName + ' ' + catName).toLowerCase()
+        });
+      });
+
+      // Register dynamic category callback
+      workspace.registerToolboxCategoryCallback('SEARCH_CATEGORY', function (workspace) {
+        const xmlList = [];
+        const q = searchInput.value.trim().toLowerCase();
+
+        // Top gap so the floating search box doesn't occlude blocks
+        const topGap = document.createElement('label');
+        topGap.setAttribute('text', ' ');
+        topGap.setAttribute('gap', '45');
+        xmlList.push(topGap);
+
+        if (!q) {
+          const l1 = document.createElement('label');
+          l1.setAttribute('text', 'Type to search blocks...');
+          xmlList.push(l1);
+          return xmlList;
+        }
+
+        const words = q.split(/\s+/);
+        const hits = searchIndex.filter(b =>
+          words.every(w => b.search.includes(w))
+        );
+
+        const l2 = document.createElement('label');
+        l2.setAttribute('text', `Related results for "${q}"`);
+        xmlList.push(l2);
+
+        if (!hits.length) {
+          const l3 = document.createElement('label');
+          l3.setAttribute('text', 'No blocks found');
+          xmlList.push(l3);
+          return xmlList;
+        }
+
+        hits.forEach(b => {
+          const block = document.createElement('block');
+          block.setAttribute('type', b.type);
+          xmlList.push(block);
+        });
+
+        return xmlList;
+      });
+
+      // Show floating search box when 'Search' category is opened
+      workspace.addChangeListener((e) => {
+        if (e.type === Blockly.Events.TOOLBOX_ITEM_SELECT) {
+          if (e.newItem === 'Search') {
+            const toolbox = workspace.getToolbox();
+            const flyoutSearch = document.getElementById('flyoutSearchContainer');
+
+            // Position exactly next to toolbox
+            const toolboxWidth = toolbox.getWidth();
+            flyoutSearch.style.left = (toolboxWidth + 12) + 'px';
+            flyoutSearch.classList.remove('hidden');
+
+            setTimeout(() => {
+              document.getElementById('flyoutSearchInput').focus();
+            }, 50);
+
+          } else {
+            document.getElementById('flyoutSearchContainer').classList.add('hidden');
+            // searchInput.value = ''; // Uncomment to clear search whenever focus is lost
+            // clearBtn.style.display = 'none';
+          }
+        }
+      });
+
+      // Debounced search handler to re-trigger category render
+      let timer;
+      searchInput.addEventListener('input', () => {
+        const hasText = searchInput.value.length > 0;
+        clearBtn.style.display = hasText ? 'block' : 'none';
+
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          const toolbox = workspace.getToolbox();
+          if (!toolbox) return;
+
+          const items = toolbox.getToolboxItems();
+          const searchCat = items.find(item => item.getName && item.getName() === 'Search');
+
+          if (searchCat && toolbox.getSelectedItem() === searchCat) {
+            // Force redraw of flyout
+            toolbox.clearSelection();
+            toolbox.setSelectedItem(searchCat);
+          }
+        }, 120);
+      });
+
+      // Clear button logic
+      clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input'));
+        searchInput.focus();
+      });
+
+      // Global shortcut: Ctrl+K to open Search Category
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          const toolbox = workspace.getToolbox();
+          if (!toolbox) return;
+          const items = toolbox.getToolboxItems();
+          const searchCat = items.find(item => item.getName && item.getName() === 'Search');
+          if (searchCat) {
+            toolbox.setSelectedItem(searchCat);
+          }
+        }
+      });
+    }
+
+
+
+
+
 
 
     //--------------WIFI BOOTING IS HERE---------------
@@ -8218,7 +8494,8 @@
       addGradientDefs();
       killBlueSelection();
       setupGradientAndShadowOnBlocks();
-    
+      initBlockSearch();
+
       // ✅ ADD THIS RIGHT HERE
       (function patchZelosImageClicks() {
         const blocklyDiv = document.getElementById('blocklyDiv');
