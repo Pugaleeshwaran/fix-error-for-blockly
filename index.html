@@ -2084,8 +2084,8 @@
       <div class="box1">
         <div class="row"><label><input type="checkbox" id="motorE11"> E11</label></div>
         <div class="row"><label><input type="checkbox" id="motorE12"> E12</label></div>
-        <div class="row"><label><input type="checkbox" id="motorC9"> C9</label></div>
-        <div class="row"><label><input type="checkbox" id="motorC8"> C8</label></div>
+        <div class="row"><label><input type="checkbox" id="motorB9"> B9</label></div>
+        <div class="row"><label><input type="checkbox" id="motorB8"> B8</label></div>
         <div class="row"><label><input type="checkbox" id="motorE13"> E13</label></div>
         <div class="row"><label><input type="checkbox" id="motorB15"> B15</label></div>
         <div class="row"><label><input type="checkbox" id="motorD15"> D15</label></div>
@@ -6779,7 +6779,7 @@
 
       const selectedSet = new Set(currentSelectedMotorArray);
 
-      ['E12', 'E11', 'C8', 'C9', 'B15', 'E13', 'E14', 'D15'].forEach(motor => {
+      ['E12', 'E11', 'B8', 'B9', 'B15', 'E13', 'E14', 'D15'].forEach(motor => {
         const cb = document.getElementById('motor' + motor);
         if (cb) {
           cb.checked = selectedSet.has(motor);
