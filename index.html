@@ -1646,6 +1646,7 @@
       <block type="ir_sen"></block>
       <block type="touch_sensor"></block>
       <block type="peltier"></block>
+      <block type="microwave_sensor"></block>
     </category>
     <category name="Analog" colour="#781692">
       <block type="tep_ana"></block>
@@ -1672,6 +1673,8 @@
       <block type="humidity"></block>
       <block type="ldr"></block>
       <block type="piezo_sensor"></block>
+      <block type="ph"></block>
+      <block type="voltage_divider"></block>
     </category>
     <category name="I2c" colour="#A020F0">
       <block type="magnetic_sensor"></block>
@@ -1694,6 +1697,7 @@
       <block type="temp_sensor"></block>
       <block type="accelerometer"></block>
       <block type="max"></block>
+      <block type="7-segmet"></block>
     </category>
     <category name="PWM" colour="#781692">
       <block type="do_dc_motor"></block>
@@ -1719,6 +1723,7 @@
       <block type="keypad"></block>
       <block type="gps"></block>
       <block type="gsm"></block>
+      <block type="tof"></block>
       <block type="mini_motor"></block>
       <block type="remote_motor"></block>
       <block type="water_motor"></block>
@@ -1731,6 +1736,7 @@
 
     <category name="SPI" colour="#2EB061">
       <block type="rfid"></block>
+      <block type="flash_memory"></block>
       <block type="sensor"></block>
       <block type="tem_sensor"></block>
       <block type="xray_sensor"></block>
@@ -2783,6 +2789,27 @@
         {
           type: "din_sound",
           message0: "SOUND CELL %1 %2",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            }],
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style", "port_image_click"]
+        }
+        , {
+          type: "microwave_sensor",
+          message0: "Microwave_sensor %1 %2",
           args0: [
             {
               type: "field_image",
@@ -4067,7 +4094,50 @@
           output: "Boolean",
           extensions: ["led_pin_image_click", "servo_color"]
         },
+        {
+          type: "ph",
+          message0: "PH %1 %2 ",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            },
 
+          ],
+          output: "Boolean",
+          extensions: ["led_pin_image_click", "servo_color"]
+        },
+        {
+          type: "voltage_divider",
+          message0: "Voltage divider %1 %2 ",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            },
+
+          ],
+          output: "Boolean",
+          extensions: ["led_pin_image_click", "servo_color"]
+        },
         {
           type: "joystick_move",
           args0: [
@@ -4552,6 +4622,14 @@
           extensions: ["temp_style"]
         },
         {
+          type: "7-segmet",
+          message0: "7 Segment display ",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
           type: "rtc_sensor",
           message0: "Rtc sensor pin ",
 
@@ -4570,7 +4648,7 @@
         ,
         {
           type: "pressure",
-          message0: "Pressure pin ",
+          message0: "Pressure",
 
           style: "control_blocks",
           output: "Boolean",
@@ -4587,7 +4665,7 @@
         },
         {
           type: "ceprom",
-          message0: "ceprom",
+          message0: "eeprom",
 
           style: "control_blocks",
           output: "Boolean",
@@ -4666,6 +4744,14 @@
           extensions: ["temp_style"]
         },
         {
+          type: "tof",
+          message0: "ToF",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
           type: "touch_sensor",
           message0: "TOUCH SENSOR %1 %2",
           args0: [
@@ -4723,6 +4809,14 @@
         {
           type: "rfid",
           message0: "RFID",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "flash_memory",
+          message0: "Flash Memory",
 
           style: "control_blocks",
           output: "Boolean",
@@ -5400,6 +5494,35 @@
         // If more than two ports are selected, return the first two only
         return [`sound("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
+
+      Blockly.Python['microwave_sensor'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`microwave_sensor("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`microwave_sensor("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`microwave_sensor("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+
       Blockly.Python['din_tilt'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
 
@@ -6350,6 +6473,61 @@
         // If more than two ports are selected, return the first two only
         return [`piezo_sensor("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
       };
+      Blockly.Python['ph'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`ph("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`ph("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`ph("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
+
+      Blockly.Python['voltage_divider'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', Blockly.Python.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`voltage_divider("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`voltage_divider("${pins[0]}","${pins[1]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`voltage_divider("${pins[0]}","${pins[1]}","${pins[2]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
+      };
       Blockly.Python['joystick_move'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
 
@@ -6507,7 +6685,7 @@
       py['LCD'] = b => [`LCD()`, py.ORDER_ATOMIC];
       py['pressure'] = b => [`pressure()`, py.ORDER_ATOMIC];
       py['compass'] = b => [`compass()`, py.ORDER_ATOMIC];
-      py['ceprom'] = b => [`ceprom()`, py.ORDER_ATOMIC];
+      py['ceprom'] = b => [`eeprom()`, py.ORDER_ATOMIC];
       py['gusture'] = b => [`gusture()`, py.ORDER_ATOMIC];
       py['ir_temp'] = b => [`ir_temp()`, py.ORDER_ATOMIC];
       py['motor_driver'] = b => [`motor_driver()`, py.ORDER_ATOMIC];
@@ -6518,11 +6696,14 @@
       py['uv_sensor'] = b => [`uv_sensor()`, py.ORDER_ATOMIC];
       py['temp_sensor'] = b => [`temp_sensor()`, py.ORDER_ATOMIC];
       py['accelerometer'] = b => [`accelerometer()`, py.ORDER_ATOMIC];
+      py['7-segmet'] = b => [`segment_display()`, py.ORDER_ATOMIC];
       py['max'] = b => [`max()`, py.ORDER_ATOMIC];
       py['rfid'] = b => [`rfid()`, py.ORDER_ATOMIC];
+      py['flash_memory'] = b => [`flash_memory()`, py.ORDER_ATOMIC];
       py['system_status'] = () => [`system_status.running`, py.ORDER_ATOMIC];
       py['finger_print_enroll'] = b => [`fingerprint_enroll()`, py.ORDER_ATOMIC];
       py['finger_print_match'] = b => [`fingerprint_match()`, py.ORDER_ATOMIC];
+      py['tof'] = b => [`tof()`, py.ORDER_ATOMIC];
       Blockly.Python['ir_sen'] = function (block) {
         const portsTxt = block.getFieldValue('PORTS') || '';
 
