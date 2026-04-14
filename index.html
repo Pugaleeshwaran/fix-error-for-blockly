@@ -4169,7 +4169,7 @@
         },
         {
           type: "Air_quality_sensor",
-          message0: "Air-quality-sensor  %1 %2 %3",
+          message0: "Air-quality-sensor  %1 %2 ",
           args0: [
             {
               type: "field_image",
@@ -4183,23 +4183,25 @@
               type: "field_label",
               name: "PORTS",
               text: ""
-            }, {
-              type: "field_dropdown",
-              name: "STATE",
-              options: [
-                ["0", "0"],
-                ["1", "1"],
-                ["2", "2"],
-                ["3", "3"],
-                ["4", "4"],
-                ["5", "5"],
-                ["6", "6"],
-                ["7", "7"],
-                ["8", "8"],
-                ["9", "9"],
-                ["10", "10"],
-              ]
-            }],
+            },
+            // {
+            //   type: "field_dropdown",
+            //   name: "STATE",
+            //   options: [
+            //     ["0", "0"],
+            //     ["1", "1"],
+            //     ["2", "2"],
+            //     ["3", "3"],
+            //     ["4", "4"],
+            //     ["5", "5"],
+            //     ["6", "6"],
+            //     ["7", "7"],
+            //     ["8", "8"],
+            //     ["9", "9"],
+            //     ["10", "10"],
+            //   ]
+            // }
+          ],
           output: "Boolean",
           colour: "#81d4ed",
           extensions: ["servo_color", "led_pin_image_click"]
@@ -6571,7 +6573,7 @@
 
         // If one port is selected, return code for that port only
         if (pins.length === 1) {
-          return [`air_quality_sensor("${pins[0]}",${angle})`, Blockly.Python.ORDER_FUNCTION_CALL];
+          return [`air_quality_sensor("${pins[0]}")`, Blockly.Python.ORDER_FUNCTION_CALL];
         }
 
         // If two ports are selected, use both for Trig and Echo
